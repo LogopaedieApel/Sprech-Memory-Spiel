@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprech-Memory</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Start oben, damit man scrollen kann, falls nötig */
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px; /* Platz nach unten */
+        }
+
+        h1 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .settings {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .settings label, .settings > div > span { /* Span für die Voice Select Beschriftung */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            flex-wrap: wrap; /* Falls Label zu lang wird */
+        }
+        
+        .settings > div { /* Wrapper für Label/Input Paare */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5px; /* Kleiner Abstand zwischen Label und Select */
+        }
+
+
+        .settings select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 0.9em;
+            min-width: 60px;
+            flex-grow: 1; /* Lässt Selects den verfügbaren Platz nehmen */
+            max-width: 180px; /* Verhindert, dass sie zu breit werden */
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 300px; 
+            aspect-ratio: 1 / 1; 
+            margin: 20px auto;
+            position: relative; 
+        }
+
+        .tile {
+            background-color: #e0e0e0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em; 
+            cursor: pointer;
+            transition: transform 0.1s ease-out, background-color 0.1s ease-out;
+            user-select: none;
+        }
+
+        .tile.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            animation: pulse 0.4s ease-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.5); }
+            100% { transform: scale(1); }
+        }
+
+        .tile.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .progress-circles {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; 
+            gap: 5px;
+        }
+
+        .circle {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid #aaa;
+            background-color: white;
+        }
+
+        .circle.correct {
+            background-color: #28a745;
+            border-color: #1e7e34;
+        }
+
+        .circle.incorrect {
+            background-color: #dc3545;
+            border-color: #b02a37;
+        }
+
+        .controls button {
+            padding: 10px 15px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+
+        #startButton { background-color: #28a745; color: white; }
+        #startButton:hover { background-color: #1e7e34; }
+        #startButton:disabled { background-color: #a0a0a0; }
+
+        #repeatButton { background-color: #ffc107; color: #333; }
+        #repeatButton:hover { background-color: #e0a800; }
+        #repeatButton:disabled { background-color: #a0a0a0; }
+
+        #abortButton { background-color: #dc3545; color: white; }
+        #abortButton:hover { background-color: #b02a37; }
+        #abortButton:disabled { background-color: #a0a0a0; }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(200, 200, 200, 0.5);
+            z-index: 10; 
+            display: none; 
+        }
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 320px) {
+            .tile {
+                font-size: 2em;
+            }
+            .container {
+                padding: 10px;
+            }
+            .settings select {
+                max-width: 150px; /* Noch schmaler für sehr kleine Screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sprech-Memory</h1>
+
+        <div class="settings">
+            <div>
+                <label for="sequenceLength">Anzahl Töne:</label>
+                <select id="sequenceLength">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <div>
+                <label for="numRounds">Durchgänge:</label>
+                <select id="numRounds">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+            <div>
+                <label for="wordSpacing">Abstand (ms):</label>
+                <select id="wordSpacing">
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500" selected>500</option>
+                    <option value="600">600</option>
+                    <option value="700">700</option>
+                    <option value="800">800</option>
+                    <option value="900">900</option>
+                    <option value="1000">1000</option>
+                </select>
+            </div>
+            <!-- NEU: Sprachauswahl -->
+            <div>
+                <span>Stimme:</span>
+                <select id="voiceSelect">
+                    <option value="">Standard</option> 
+                    <!-- Stimmen werden per JS geladen -->
+                </select>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="overlay" id="boardOverlay"></div>
+        </div>
+
+        <div class="progress-circles" id="progressCircles"></div>
+
+        <div class="controls">
+            <button id="startButton">Start</button>
+            <button id="repeatButton" disabled>Wiederholen</button>
+            <button id="abortButton" disabled>Abbrechen</button>
+        </div>
+    </div>
+
+    <script>
+        const EMOJIS_DATA = [
+            { emoji: '🥗', word: 'der Salat', id: 0 },
+            { emoji: '🧃', word: 'der Saft', id: 1 },
+            { emoji: '🪚', word: 'die Säge', id: 2 },
+            { emoji: '⛵', word: 'das Segelboot', id: 3 },
+            { emoji: '🧴', word: 'die Seife', id: 4 },
+            { emoji: '🧦', word: 'die Socken', id: 5 },
+            { emoji: '☀️', word: 'die Sonne', id: 6 },
+            { emoji: '🦸', word: 'der Superman', id: 7 },
+            { emoji: '🍲', word: 'die Suppe', id: 8 }
+        ];
+
+        const gameBoardElement = document.getElementById('gameBoard'); // Umbenannt, da gameBoard schon eine Variable sein könnte
+        const boardOverlay = document.getElementById('boardOverlay');
+        const sequenceLengthSelect = document.getElementById('sequenceLength');
+        const numRoundsSelect = document.getElementById('numRounds');
+        const wordSpacingSelect = document.getElementById('wordSpacing');
+        const voiceSelect = document.getElementById('voiceSelect'); // NEU
+        const startButton = document.getElementById('startButton');
+        const repeatButton = document.getElementById('repeatButton');
+        const abortButton = document.getElementById('abortButton');
+        const progressCirclesContainer = document.getElementById('progressCircles');
+
+        let currentSequence = [];
+        let playerSequence = [];
+        let currentRound = 0;
+        let totalRounds = 0;
+        let correctRounds = 0;
+        let sequenceLength = 0;
+        let wordSpacing = 0;
+        let gameActive = false;
+        let audioContext;
+        let availableVoices = []; // NEU: Array für alle Stimmen
+        let selectedVoice = null; // NEU: Ausgewählte Stimme
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateBoard();
+            initializeVoiceSelection(); // NEU: Stimmen laden und Dropdown füllen
+            
+            startButton.addEventListener('click', startGame);
+            repeatButton.addEventListener('click', repeatCurrentSequence);
+            abortButton.addEventListener('click', abortGame);
+            voiceSelect.addEventListener('change', handleVoiceChange); // NEU
+        });
+
+        // NEU: Stimmen laden und Dropdown initialisieren
+        function initializeVoiceSelection() {
+            if ('speechSynthesis' in window) {
+                const populateVoices = () => {
+                    availableVoices = speechSynthesis.getVoices();
+                    const germanVoices = availableVoices.filter(voice => voice.lang.startsWith('de'));
+                    
+                    voiceSelect.innerHTML = '<option value="">Standard (Browser)</option>'; // Standardoption
+                    
+                    if (germanVoices.length > 0) {
+                        germanVoices.forEach(voice => {
+                            const option = document.createElement('option');
+                            option.value = voice.voiceURI; // voiceURI ist ein guter eindeutiger Wert
+                            option.textContent = `${voice.name} (${voice.lang})`;
+                            voiceSelect.appendChild(option);
+                        });
+
+                        // Versuche, eine gespeicherte Stimme zu laden oder die erste deutsche Stimme auszuwählen
+                        const savedVoiceURI = localStorage.getItem('selectedVoiceURI');
+                        if (savedVoiceURI && germanVoices.some(v => v.voiceURI === savedVoiceURI)) {
+                            voiceSelect.value = savedVoiceURI;
+                            selectedVoice = germanVoices.find(v => v.voiceURI === savedVoiceURI);
+                        } else if (germanVoices.length > 0) {
+                            // Wähle die erste deutsche Stimme als Standard, wenn nichts gespeichert ist
+                            voiceSelect.value = germanVoices[0].voiceURI;
+                            selectedVoice = germanVoices[0];
+                        }
+                    } else {
+                         voiceSelect.innerHTML = '<option value="">Keine dt. Stimme</option>';
+                         voiceSelect.disabled = true;
+                    }
+                };
+
+                // Stimmen werden oft asynchron geladen.
+                if (speechSynthesis.getVoices().length === 0) {
+                    speechSynthesis.onvoiceschanged = populateVoices;
+                } else {
+                    populateVoices(); // Sofort ausführen, wenn Stimmen bereits geladen sind
+                }
+            } else {
+                console.warn("TTS nicht unterstützt.");
+                voiceSelect.innerHTML = '<option value="">TTS nicht unterstützt</option>';
+                voiceSelect.disabled = true;
+            }
+        }
+
+        // NEU: Handler für Sprachauswahl-Änderung
+        function handleVoiceChange() {
+            const selectedURI = voiceSelect.value;
+            if (selectedURI === "") {
+                selectedVoice = null; // Standardstimme des Browsers verwenden
+                localStorage.removeItem('selectedVoiceURI');
+            } else {
+                selectedVoice = availableVoices.find(voice => voice.voiceURI === selectedURI);
+                if (selectedVoice) {
+                    localStorage.setItem('selectedVoiceURI', selectedVoice.voiceURI);
+                }
+            }
+             // Test-Ausgabe der Stimme
+            if (selectedVoice) {
+                speak(`Stimme ${selectedVoice.name} ausgewählt.`);
+            } else {
+                speak("Standardstimme ausgewählt.");
+            }
+        }
+
+
+        function populateBoard() {
+            // Sicherstellen, dass das Overlay nicht versehentlich entfernt wird, falls es außerhalb der Kacheln liegt
+            const existingOverlay = gameBoardElement.querySelector('.overlay');
+            gameBoardElement.innerHTML = ''; // Alle Kacheln löschen
+            if (existingOverlay) gameBoardElement.appendChild(existingOverlay); // Overlay wieder anhängen
+            else { // Falls es doch weg war, neu erstellen
+                const newOverlay = document.createElement('div');
+                newOverlay.classList.add('overlay');
+                newOverlay.id = 'boardOverlay'; // Wichtig, die ID wieder zu setzen
+                gameBoardElement.appendChild(newOverlay);
+            }
+
+
+            EMOJIS_DATA.forEach(item => {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.id = item.id;
+                tile.textContent = item.emoji;
+                tile.addEventListener('click', () => handleTileClick(item.id));
+                gameBoardElement.appendChild(tile);
+            });
+        }
+
+        function startGame() {
+            if (gameActive) return;
+            gameActive = true;
+
+            sequenceLength = parseInt(sequenceLengthSelect.value);
+            totalRounds = parseInt(numRoundsSelect.value);
+            wordSpacing = parseInt(wordSpacingSelect.value);
+
+            currentRound = 0;
+            correctRounds = 0;
+            playerSequence = [];
+
+            updateButtonStates(true);
+            updateSettingsAccess(false);
+            initializeProgressCircles(totalRounds);
+            
+            nextRound();
+        }
+
+        function abortGame() {
+            gameActive = false;
+            currentSequence = [];
+            playerSequence = [];
+            updateButtonStates(false);
+            updateSettingsAccess(true);
+            clearProgressCircles();
+            disableBoardInteraction(false);
+            document.querySelectorAll('.tile.active').forEach(t => t.classList.remove('active'));
+            console.log("Spiel abgebrochen.");
+            // Stoppe laufende Sprachausgabe beim Abbrechen
+            if ('speechSynthesis' in window && speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        function updateButtonStates(isPlaying) {
+            startButton.disabled = isPlaying;
+            repeatButton.disabled = !isPlaying || currentSequence.length === 0; 
+            abortButton.disabled = !isPlaying;
+        }
+
+        function updateSettingsAccess(enabled) {
+            sequenceLengthSelect.disabled = !enabled;
+            numRoundsSelect.disabled = !enabled;
+            wordSpacingSelect.disabled = !enabled;
+            voiceSelect.disabled = !enabled; // NEU: Auch Sprachauswahl sperren/freigeben
+            // Wenn keine Stimmen da sind, soll es disabled bleiben
+            if (availableVoices.filter(v => v.lang.startsWith('de')).length === 0 && enabled) {
+                voiceSelect.disabled = true;
+            }
+        }
+
+        function initializeProgressCircles(num) {
+            progressCirclesContainer.innerHTML = '';
+            for (let i = 0; i < num; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+                progressCirclesContainer.appendChild(circle);
+            }
+        }
+        
+        function clearProgressCircles() {
+            progressCirclesContainer.innerHTML = '';
+        }
+
+        function updateProgressCircle(roundIndex, isCorrect) {
+            const circles = progressCirclesContainer.children;
+            if (circles[roundIndex]) {
+                circles[roundIndex].classList.add(isCorrect ? 'correct' : 'incorrect');
+            }
+        }
+        
+        function disableBoardInteraction(disable) {
+            const localBoardOverlay = document.getElementById('boardOverlay'); // Sicherstellen, dass wir das korrekte Element haben
+            if (localBoardOverlay) { // Überprüfen, ob das Element existiert
+                 localBoardOverlay.style.display = disable ? 'block' : 'none';
+            } else {
+                console.error("Board Overlay nicht gefunden in disableBoardInteraction!");
+            }
+        }
+
+
+        async function nextRound() {
+            if (currentRound >= totalRounds) {
+                endGame();
+                return;
+            }
+            playerSequence = [];
+            disableBoardInteraction(true); 
+            repeatButton.disabled = true;
+
+            await sleep(500); 
+
+            currentSequence = generateRandomSequence(sequenceLength);
+            await playSequence(currentSequence);
+            
+            disableBoardInteraction(false); 
+            repeatButton.disabled = !gameActive;
+        }
+
+        function generateRandomSequence(length) {
+            const sequence = [];
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * EMOJIS_DATA.length);
+                sequence.push(EMOJIS_DATA[randomIndex].id);
+            }
+            return sequence;
+        }
+
+        async function playSequence(sequence, isRepeat = false) {
+            disableBoardInteraction(true);
+            if (!isRepeat) {
+                 repeatButton.disabled = true;
+            }
+
+            for (const itemId of sequence) {
+                if (!gameActive && !isRepeat) break; // Wenn Spiel während der Sequenz abgebrochen wurde (außer bei explizitem Repeat)
+
+                const itemData = EMOJIS_DATA.find(d => d.id === itemId);
+                const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
+
+                if (itemData && tileElement) {
+                    tileElement.classList.add('active');
+                    await speak(itemData.word); // Warten bis Wort gesprochen wurde
+                    await sleep(100); // Mindestzeit für Animation, falls TTS sehr schnell ist
+                    tileElement.classList.remove('active');
+                }
+                if (gameActive || isRepeat) await sleep(wordSpacing); // Nur warten wenn Spiel noch läuft oder es ein Repeat ist
+                else break; // Sonst abbrechen
+            }
+            if (!isRepeat) {
+                repeatButton.disabled = !gameActive; 
+            }
+             disableBoardInteraction(false);
+        }
+        
+        async function repeatCurrentSequence() {
+            if (!gameActive || currentSequence.length === 0) return;
+            console.log("Wiederhole Sequenz...");
+            playerSequence = []; 
+            disableBoardInteraction(true); 
+            repeatButton.disabled = true; 
+            
+            await playSequence(currentSequence, true); 
+            
+            disableBoardInteraction(false); 
+            repeatButton.disabled = !gameActive;
+        }
+
+
+        function speak(text) {
+            return new Promise((resolve, reject) => {
+                if (!('speechSynthesis' in window) || !text) {
+                    console.warn("TTS nicht verfügbar oder kein Text.");
+                    resolve(); 
+                    return;
+                }
+                // Stoppe vorherige Sprachausgabe, falls noch aktiv
+                if (speechSynthesis.speaking) {
+                    speechSynthesis.cancel(); 
+                }
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'de-DE'; // Immer setzen, auch wenn eine spezifische Stimme gewählt wird
+                
+                // NEU: Ausgewählte Stimme verwenden
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                } else {
+                    // Fallback: Versuche, eine Standard-deutsche Stimme zu finden, wenn keine spezifische ausgewählt ist
+                    const allVoices = speechSynthesis.getVoices();
+                    const defaultGermanVoice = allVoices.find(v => v.lang.startsWith('de') && v.default) || allVoices.find(v => v.lang.startsWith('de'));
+                    if (defaultGermanVoice) {
+                        utterance.voice = defaultGermanVoice;
+                    }
+                }
+                
+                utterance.onend = () => resolve();
+                utterance.onerror = (event) => {
+                    console.error('SpeechSynthesisUtterance.onerror', event);
+                    // Nicht rejecten, damit das Spiel weiterläuft, aber Fehler loggen
+                    resolve(); // Statt reject(event)
+                };
+                speechSynthesis.speak(utterance);
+            });
+        }
+
+        function handleTileClick(itemId) {
+            const localBoardOverlay = document.getElementById('boardOverlay'); // Sicherstellen, dass wir das korrekte Element haben
+            if (!gameActive || playerSequence.length >= currentSequence.length || (localBoardOverlay && localBoardOverlay.style.display === 'block')) {
+                return;
+            }
+
+            playerSequence.push(itemId);
+            
+            const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
+            if (tileElement) {
+                tileElement.classList.add('active');
+                setTimeout(() => tileElement.classList.remove('active'), 300);
+            }
+
+            if (playerSequence.length === currentSequence.length) {
+                evaluatePlayerInput();
+            }
+        }
+
+        async function evaluatePlayerInput() {
+            disableBoardInteraction(true); 
+            let isCorrect = true;
+            for (let i = 0; i < currentSequence.length; i++) {
+                if (currentSequence[i] !== playerSequence[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            updateProgressCircle(currentRound, isCorrect);
+            if (isCorrect) {
+                correctRounds++;
+            }
+            
+            currentRound++;
+            await sleep(1000); 
+            nextRound(); 
+        }
+
+        function endGame() {
+            gameActive = false;
+            disableBoardInteraction(false); 
+            updateButtonStates(false); 
+            updateSettingsAccess(true);
+
+            const successRate = totalRounds > 0 ? (correctRounds / totalRounds) * 100 : 0;
+            console.log(`Spiel beendet. ${correctRounds} von ${totalRounds} richtig (${successRate.toFixed(1)}%).`);
+            
+            setTimeout(() => { 
+                alert(`Spiel beendet!\nDu hast ${correctRounds} von ${totalRounds} Durchgängen richtig (${successRate.toFixed(1)}%).`);
+                 if (successRate >= 75) {
+                    playRewardMelody();
+                }
+            }, 100);
+        }
+
+        function playRewardMelody() {
+            if (!audioContext) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn("Web Audio API nicht unterstützt oder konnte nicht initialisiert werden.", e);
+                    return;
+                }
+            }
+             if (!audioContext) { // Zusätzliche Prüfung
+                console.warn("AudioContext konnte nicht erstellt werden.");
+                return;
+            }
+
+
+            const scaleFrequencies = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+            const melodyLength = 7;
+            let currentTime = audioContext.currentTime;
+            const noteDuration = 0.2; 
+            const pauseDuration = 0.05; 
+
+            for (let i = 0; i < melodyLength; i++) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                const randomNoteIndex = Math.floor(Math.random() * scaleFrequencies.length);
+                oscillator.frequency.setValueAtTime(scaleFrequencies[randomNoteIndex], currentTime);
+                oscillator.type = 'sine'; 
+
+                gainNode.gain.setValueAtTime(0.3, currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, currentTime + noteDuration);
+
+                oscillator.start(currentTime);
+                oscillator.stop(currentTime + noteDuration);
+
+                currentTime += noteDuration + pauseDuration;
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+    </script>
+</body>
+</html>
