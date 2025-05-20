@@ -38,23 +38,24 @@
             background-color: #0056b3;
         }
 
+        /* --- ANPASSUNGEN FÜR DAS MENÜ-LAYOUT --- */
         .settings-menu {
             position: fixed;
             top: 0;
             left: 0;
             width: 280px;
             max-width: 80%;
-            height: 100vh;
+            height: 100vh; /* Feste Höhe für das Menü */
             background-color: #f8f9fa;
             box-shadow: 3px 0px 10px rgba(0,0,0,0.1);
             transform: translateX(-100%);
             transition: transform 0.3s ease-in-out;
             z-index: 1001;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
+            display: flex; /* Flex-Container für Header und Content */
+            flex-direction: column; /* Vertikale Anordnung */
+            padding: 15px; /* Allgemeines Padding für das Menü */
             box-sizing: border-box;
-            overflow-y: auto;
+            /* overflow-y: auto; -- Wird jetzt vom settings-menu-content gehandhabt */
         }
 
         .settings-menu.active {
@@ -68,6 +69,7 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
+            flex-shrink: 0; /* Header soll nicht schrumpfen */
         }
         .settings-menu-header h2 { margin: 0; color: #333; font-size: 1.4em; }
 
@@ -85,14 +87,16 @@
         .settings-menu-content {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
+            flex-grow: 1; /* Nimmt den restlichen Platz im .settings-menu ein */
+            overflow-y: auto; /* Dieser Bereich soll scrollbar sein, wenn der Inhalt zu groß ist */
+            min-height: 0; /* Wichtig für Flexbox-Kinder, die scrollen sollen */
         }
 
         .settings-menu-content .settings {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 25px;
+            /* margin-bottom: 25px; -- Wird durch Button-Layout flexibler */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -128,9 +132,13 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: auto;
+            margin-top: auto; /* Schiebt den Button nach unten innerhalb .settings-menu-content */
+            padding-top: 20px; /* Abstand nach oben zum .settings Block */
+            margin-bottom: 5px; /* Kleiner Abstand zum unteren Rand des scrollbaren Bereichs */
+            flex-shrink: 0; /* Button soll nicht schrumpfen */
         }
         .apply-button:hover { background-color: #1e7e34; }
+        /* --- ENDE ANPASSUNGEN FÜR DAS MENÜ-LAYOUT --- */
 
         .menu-overlay {
             position: fixed;
@@ -241,9 +249,6 @@
             justify-content: center; /* Zentriert den Wiederhol-Button */
             align-items: center;
             margin-top: 20px;
-            /* gap: 15px; */ /* Nicht mehr nötig, da Logo absolut ist */
-             /* Höhe der Controls, falls benötigt für vertikale Ausrichtung,
-               aber durch padding-bottom im container ist unten Platz */
         }
         .round-icon-button {
             background-color: #ffc107; color: #333; border: none;
@@ -306,8 +311,8 @@
         @media (max-width: 320px) {
             .tile { font-size: 2em; }
             .container {
-                padding: 15px; /* Standard-Padding oben, links, rechts für kleine Bildschirme */
-                padding-bottom: 60px; /* Erhöhtes Padding unten (Logo Höhe + Abstand) anpassen */
+                padding: 15px;
+                padding-bottom: 60px; /* (Logo Höhe + Abstand) anpassen */
             }
             #controlBarLogo {
                 right: 15px;
@@ -328,7 +333,7 @@
             <h2>Einstellungen</h2>
             <button id="closeMenuButton" class="close-menu-button" aria-label="Einstellungen schließen">×</button>
         </div>
-        <div class="settings-menu-content">
+        <div class="settings-menu-content"> <!-- Dieser Bereich wird jetzt scrollen -->
             <div class="settings">
                 <div>
                     <label for="sequenceLength">Anzahl Töne:</label>
@@ -387,8 +392,6 @@
     </div>
 
     <script>
-        // Kompletter JavaScript-Code bleibt wie in der vorherigen Version
-        // ... (bitte den JavaScript-Code von der vorherigen Antwort hier einfügen) ...
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
