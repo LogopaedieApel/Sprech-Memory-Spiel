@@ -38,24 +38,23 @@
             background-color: #0056b3;
         }
 
-        /* --- ANPASSUNGEN FÜR DAS MENÜ-LAYOUT --- */
         .settings-menu {
             position: fixed;
             top: 0;
             left: 0;
             width: 280px;
             max-width: 80%;
-            height: 100vh; /* Feste Höhe für das Menü */
+            height: 100vh;
             background-color: #f8f9fa;
             box-shadow: 3px 0px 10px rgba(0,0,0,0.1);
             transform: translateX(-100%);
             transition: transform 0.3s ease-in-out;
             z-index: 1001;
-            display: flex; /* Flex-Container für Header und Content */
-            flex-direction: column; /* Vertikale Anordnung */
-            padding: 15px; /* Allgemeines Padding für das Menü */
+            display: flex;
+            flex-direction: column;
+            padding: 15px; /* Padding für das gesamte Menü (Header und Rand des Contents) */
             box-sizing: border-box;
-            /* overflow-y: auto; -- Wird jetzt vom settings-menu-content gehandhabt */
+            /* overflow-y: auto; */ /* Entfernt von hier */
         }
 
         .settings-menu.active {
@@ -66,10 +65,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 20px; /* Abstand zum Content-Bereich */
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
-            flex-shrink: 0; /* Header soll nicht schrumpfen */
+            flex-shrink: 0; /* Verhindert, dass der Header schrumpft */
         }
         .settings-menu-header h2 { margin: 0; color: #333; font-size: 1.4em; }
 
@@ -87,16 +86,16 @@
         .settings-menu-content {
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Nimmt den restlichen Platz im .settings-menu ein */
-            overflow-y: auto; /* Dieser Bereich soll scrollbar sein, wenn der Inhalt zu groß ist */
-            min-height: 0; /* Wichtig für Flexbox-Kinder, die scrollen sollen */
+            flex-grow: 1; /* Nimmt den restlichen Platz ein */
+            overflow-y: auto; /* HIER IST JETZT DIE SCROLLBAR für den Inhalt */
+            min-height: 0; /* Hilft bei Flexbox-Overflow-Berechnungen */
         }
 
         .settings-menu-content .settings {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            /* margin-bottom: 25px; -- Wird durch Button-Layout flexibler */
+            margin-bottom: 25px; /* Abstand zum Apply-Button */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -132,13 +131,10 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: auto; /* Schiebt den Button nach unten innerhalb .settings-menu-content */
-            padding-top: 20px; /* Abstand nach oben zum .settings Block */
-            margin-bottom: 5px; /* Kleiner Abstand zum unteren Rand des scrollbaren Bereichs */
-            flex-shrink: 0; /* Button soll nicht schrumpfen */
+            margin-top: auto; /* Drückt Button nach unten im .settings-menu-content */
+            flex-shrink: 0; /* Verhindert, dass der Button schrumpft */
         }
         .apply-button:hover { background-color: #1e7e34; }
-        /* --- ENDE ANPASSUNGEN FÜR DAS MENÜ-LAYOUT --- */
 
         .menu-overlay {
             position: fixed;
@@ -159,14 +155,14 @@
 
         .container {
             background-color: #fff;
-            padding: 20px; /* Standard-Padding oben, links, rechts */
-            padding-bottom: 70px; /* Erhöhtes Padding unten für das Logo (Logo Höhe + Abstand) */
+            padding: 20px;
+            padding-bottom: 70px; /* Platz für das absolut positionierte Logo */
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             text-align: center;
             width: 100%;
             max-width: 400px;
-            position: relative; /* Wichtig für absolute Positionierung des Logos */
+            position: relative;
         }
 
         h1 {
@@ -246,7 +242,7 @@
 
         .controls {
             display: flex;
-            justify-content: center; /* Zentriert den Wiederhol-Button */
+            justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
@@ -267,9 +263,9 @@
 
         #controlBarLogo {
             position: absolute;
-            right: 20px;  /* Abstand vom rechten Rand des .container */
-            bottom: 20px; /* Abstand vom unteren Rand des .container */
-            width: 40px;  /* Gewünschte Größe des Logos */
+            right: 20px;
+            bottom: 20px;
+            width: 40px;
             height: 40px;
             object-fit: contain;
         }
@@ -312,7 +308,7 @@
             .tile { font-size: 2em; }
             .container {
                 padding: 15px;
-                padding-bottom: 60px; /* (Logo Höhe + Abstand) anpassen */
+                padding-bottom: 60px; /* Ggf. anpassen, wenn Logo-Größe in Media Query geändert wird */
             }
             #controlBarLogo {
                 right: 15px;
@@ -333,7 +329,7 @@
             <h2>Einstellungen</h2>
             <button id="closeMenuButton" class="close-menu-button" aria-label="Einstellungen schließen">×</button>
         </div>
-        <div class="settings-menu-content"> <!-- Dieser Bereich wird jetzt scrollen -->
+        <div class="settings-menu-content">
             <div class="settings">
                 <div>
                     <label for="sequenceLength">Anzahl Töne:</label>
@@ -386,7 +382,6 @@
             <button id="repeatButton" class="round-icon-button" disabled aria-label="Sequenz wiederholen">
                 ↺
             </button>
-            <!-- ERSETZE 'images/logo.png' MIT DEM KORREKTEN PFAD ZU DEINEM LOGO -->
             <img src="images/logo.png" alt="Firmenlogo" id="controlBarLogo">
         </div>
     </div>
