@@ -10,27 +10,27 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; 
+            justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
             color: #333;
-            padding-top: 60px; 
+            padding-top: 60px;
             box-sizing: border-box;
         }
 
         .menu-toggle-button {
-            position: fixed; 
+            position: fixed;
             top: 10px;
             right: 10px;
-            z-index: 1002; 
+            z-index: 1002;
             background: #007bff;
             color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.4em; 
+            font-size: 1.4em;
             line-height: 1;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
@@ -42,19 +42,19 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 280px; 
-            max-width: 80%; 
+            width: 280px;
+            max-width: 80%;
             height: 100vh;
             background-color: #f8f9fa;
             box-shadow: 3px 0px 10px rgba(0,0,0,0.1);
             transform: translateX(-100%);
             transition: transform 0.3s ease-in-out;
-            z-index: 1001; 
+            z-index: 1001;
             display: flex;
             flex-direction: column;
             padding: 15px;
             box-sizing: border-box;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
         .settings-menu.active {
@@ -82,16 +82,22 @@
         }
         .close-menu-button:hover { color: #333; }
 
+        .settings-menu-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Wichtig, damit margin-top: auto für Logo funktioniert */
+        }
+
         .settings-menu-content .settings {
             display: flex;
             flex-direction: column;
-            gap: 15px; 
+            gap: 15px;
             margin-bottom: 25px;
         }
         .settings-menu-content .settings > div {
             display: flex;
-            flex-direction: column; 
-            align-items: flex-start; 
+            flex-direction: column;
+            align-items: flex-start;
             gap: 5px;
         }
         .settings-menu-content .settings label {
@@ -99,17 +105,17 @@
             color: #555;
         }
         .settings-menu-content .settings select {
-            padding: 10px; 
+            padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 1em;
-            width: 100%; 
+            width: 100%;
             box-sizing: border-box;
         }
         .settings-menu-content .settings select:disabled {
             background-color: #e9ecef;
             opacity: 0.7;
-            cursor: not-allowed; 
+            cursor: not-allowed;
         }
 
         .apply-button {
@@ -122,9 +128,27 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: auto; 
+            /* margin-top: auto; */ /* Entfernt, damit Logo unten platziert werden kann */
+            margin-bottom: 20px; /* Abstand zum Logo */
         }
         .apply-button:hover { background-color: #1e7e34; }
+
+        .settings-menu-logo-container {
+            margin-top: auto; /* Drückt das Logo nach unten */
+            padding-top: 20px; /* Abstand nach oben */
+            padding-bottom: 15px; /* Abstand zum unteren Menürand */
+            display: flex;
+            justify-content: center; /* Zentriert das Logo horizontal */
+            align-items: center;
+        }
+
+        #menuLogo {
+            max-width: 70px;  /* Passe die Größe an dein Logo an */
+            max-height: 70px; /* Passe die Größe an dein Logo an */
+            width: auto;
+            height: auto;
+            /* border-radius: 8px; */ /* Optional */
+        }
 
         .menu-overlay {
             position: fixed;
@@ -134,7 +158,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
             display: none;
-            z-index: 1000; 
+            z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
@@ -143,7 +167,7 @@
             opacity: 1;
         }
 
-        .container { 
+        .container {
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -165,11 +189,18 @@
             grid-template-rows: repeat(3, 1fr);
             gap: 10px;
             width: 100%;
-            max-width: 300px; 
-            aspect-ratio: 1 / 1; 
+            max-width: 300px;
+            aspect-ratio: 1 / 1;
             margin: 20px auto;
-            position: relative; 
+            position: relative;
         }
+        .game-board.initial-focus-menu > .tile {
+            filter: blur(3px);
+        }
+        .game-board.initial-focus-menu .overlay {
+            background-color: rgba(200, 200, 200, 0.5);
+        }
+
 
         .tile {
             background-color: #e0e0e0;
@@ -178,9 +209,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5em; 
+            font-size: 2.5em;
             cursor: pointer;
-            transition: transform 0.1s ease-out, background-color 0.1s ease-out;
+            transition: transform 0.1s ease-out, background-color 0.1s ease-out, filter 0.3s ease-out;
             user-select: none;
         }
         .tile.active {
@@ -212,7 +243,7 @@
             margin-bottom: 20px;
             display: flex;
             justify-content: center;
-            flex-wrap: wrap; 
+            flex-wrap: wrap;
             gap: 5px;
         }
         .circle {
@@ -224,12 +255,12 @@
 
         .controls {
             display: flex;
-            justify-content: center; 
-            margin-top: 20px; 
+            justify-content: center;
+            margin-top: 20px;
         }
-        .round-icon-button { 
+        .round-icon-button {
             background-color: #ffc107; color: #333; border: none;
-            width: 48px; height: 48px; border-radius: 50%; 
+            width: 48px; height: 48px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.6em; cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
@@ -241,16 +272,16 @@
             background-color: #c0c0c0; color: #888;
             cursor: not-allowed; box-shadow: none;
         }
-        
+
         #endGameMessage {
             margin-top: 15px;
             font-weight: bold;
             color: #007bff;
-            min-height: 1.2em; 
+            min-height: 1.2em;
         }
-        
+
         #endGameActions {
-            display: none; 
+            display: none;
             margin-top: 15px;
         }
         #playAgainButton {
@@ -268,12 +299,12 @@
             background-color: #0056b3;
         }
 
-        .game-board .overlay { 
+        .game-board .overlay {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: rgba(200, 200, 200, 0.3); 
-            z-index: 5; 
-            display: none; 
+            background-color: rgba(200, 200, 200, 0.3);
+            z-index: 5;
+            display: none;
         }
 
         @media (max-width: 320px) {
@@ -284,7 +315,7 @@
 </head>
 <body>
     <button id="menuToggleButton" class="menu-toggle-button" aria-label="Einstellungen öffnen" aria-expanded="false">
-        ☰ 
+        ☰
     </button>
 
     <div id="settingsMenu" class="settings-menu" aria-hidden="true">
@@ -326,6 +357,11 @@
                 </div>
             </div>
             <button id="applySettingsAndStartButton" class="apply-button">Spiel Starten / Übernehmen</button>
+
+            <div class="settings-menu-logo-container">
+                <!-- ERSETZE 'pfad/zu/deinem/logo.png' MIT DEM KORREKTEN PFAD ZU DEINEM LOGO -->
+                <img src="images/logo.png" alt="Mein Firmenlogo" id="menuLogo">
+            </div>
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -343,25 +379,25 @@
         <div class="progress-circles" id="progressCircles"></div>
         <div class="controls">
             <button id="repeatButton" class="round-icon-button" disabled aria-label="Sequenz wiederholen">
-                ↺ 
+                ↺
             </button>
         </div>
     </div>
 
     <script>
-        const EMOJIS_DATA = [ /* ... Emojis ... */ 
+        const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
             { emoji: '🍰', word: 'Kuchen', id: 4 }, { emoji: '🕯️', word: 'Kerze', id: 5 },
             { emoji: '🪲', word: 'Käfer', id: 6 }, { emoji: '🧳', word: 'Koffer', id: 7 },
             { emoji: '🌵', word: 'Kaktus', id: 8 }
         ];
-        const NOTE = { /* ... Noten ... */ 
-            C4: 523.26, D4: 587.32, E4: 659.26, F4: 698.46, G4: 784.00, A4: 880.00, 
+        const NOTE = {
+            C4: 523.26, D4: 587.32, E4: 659.26, F4: 698.46, G4: 784.00, A4: 880.00,
             B4: 987.76, C5: 1046.50, D5: 1174.66, E5: 1318.50, F5: 1396.92, G5: 1567.98,
             PAUSE: 0
         };
-        const REWARD_MELODIES = [ /* ... Melodien ... */ 
+        const REWARD_MELODIES = [
             [NOTE.C4, NOTE.E4, NOTE.G4, NOTE.C5], [NOTE.G4, NOTE.A4, NOTE.G4, NOTE.E4, NOTE.C4],
             [NOTE.C5, NOTE.B4, NOTE.A4, NOTE.G4, NOTE.F4, NOTE.E4, NOTE.D4, NOTE.C4],
             [NOTE.C4, NOTE.C4, NOTE.G4, NOTE.G4, NOTE.A4, NOTE.A4, NOTE.G4],
@@ -377,7 +413,7 @@
         const closeMenuButton = document.getElementById('closeMenuButton');
         const menuOverlay = document.getElementById('menuOverlay');
         const applySettingsAndStartButton = document.getElementById('applySettingsAndStartButton');
-        
+
         const gameBoardElement = document.getElementById('gameBoard');
         const boardOverlay = document.getElementById('boardOverlay');
         const sequenceLengthSelect = document.getElementById('sequenceLength');
@@ -404,28 +440,56 @@
         let selectedVoice = null;
         let roundAttempts = 0;
         const MAX_ATTEMPTS_PER_ROUND = 2;
-        let gameWasPausedByMenu = false; 
+        let gameWasPausedByMenu = false;
+        let firstLoad = true;
 
-        // --- Initialisierung ---
+        async function ensureAudioContext() {
+            if (!audioContext || audioContext.state === 'closed') {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log("AudioContext neu erstellt. Status:", audioContext.state);
+                } catch (e) {
+                    console.warn("AudioContext konnte nicht initialisiert werden.", e);
+                    return null;
+                }
+            }
+            if (audioContext.state === 'suspended') {
+                try {
+                    await audioContext.resume();
+                    console.log("AudioContext resumed. Status:", audioContext.state);
+                } catch (e) {
+                    console.warn("AudioContext resume fehlgeschlagen.", e);
+                    return null;
+                }
+            }
+            return audioContext;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             populateBoard();
             initializeVoiceSelection();
-            
+
             menuToggleButton.addEventListener('click', () => toggleMenu());
             closeMenuButton.addEventListener('click', () => toggleMenu(false));
             menuOverlay.addEventListener('click', () => toggleMenu(false));
             applySettingsAndStartButton.addEventListener('click', handleApplySettingsAndStart);
             playAgainButtonElement.addEventListener('click', handlePlayAgain);
-            
+
             repeatButton.addEventListener('click', repeatCurrentSequence);
             voiceSelect.addEventListener('change', handleVoiceChange);
 
             settingsMenu.setAttribute('aria-hidden', 'true');
             menuToggleButton.setAttribute('aria-expanded', 'false');
-            updateSettingsAccess(false); 
+
+            if (firstLoad) {
+                toggleMenu(true);
+                disableBoardInteraction(true);
+                gameBoardElement.classList.add('initial-focus-menu');
+            }
+            updateSettingsAccess(false);
         });
 
-        function initializeVoiceSelection() { 
+        function initializeVoiceSelection() {
             if ('speechSynthesis' in window) {
                 const populateVoices = () => {
                     availableVoices = speechSynthesis.getVoices();
@@ -442,14 +506,14 @@
                         if (savedVoiceURI && germanVoices.some(v => v.voiceURI === savedVoiceURI)) {
                             voiceSelect.value = savedVoiceURI;
                             selectedVoice = germanVoices.find(v => v.voiceURI === savedVoiceURI);
-                        } else if (germanVoices.length > 0) { 
+                        } else if (germanVoices.length > 0) {
                             voiceSelect.value = germanVoices[0].voiceURI;
                             selectedVoice = germanVoices[0];
                         }
                     } else {
                          voiceSelect.innerHTML = '<option value="">Keine dt. Stimme</option>';
                     }
-                    updateSettingsAccess(gameActive); 
+                    updateSettingsAccess(gameActive);
                 };
                 if (speechSynthesis.getVoices().length === 0) {
                      speechSynthesis.onvoiceschanged = populateVoices;
@@ -462,7 +526,8 @@
                 voiceSelect.disabled = true;
             }
         }
-        function handleVoiceChange() { 
+
+        function handleVoiceChange() {
             const selectedURI = voiceSelect.value;
             if (selectedURI === "") {
                 selectedVoice = null;
@@ -474,9 +539,10 @@
             if (selectedVoice) speak(`Stimme ${selectedVoice.name} ausgewählt.`);
             else speak("Standardstimme ausgewählt.");
         }
+
         function populateBoard() {
-            gameBoardElement.innerHTML = ''; 
-            gameBoardElement.appendChild(boardOverlay); 
+            gameBoardElement.innerHTML = '';
+            gameBoardElement.appendChild(boardOverlay);
             EMOJIS_DATA.forEach(item => {
                 const tile = document.createElement('div');
                 tile.classList.add('tile');
@@ -485,122 +551,110 @@
                 tile.addEventListener('click', () => handleTileClick(item.id));
                 gameBoardElement.appendChild(tile);
             });
-         }
+        }
 
-        // --- Menü-Logik ---
         function toggleMenu(forceOpen = null) {
             const isOpen = settingsMenu.classList.contains('active');
             const show = forceOpen !== null ? forceOpen : !isOpen;
 
-            if (show) { 
+            if (show) {
                 settingsMenu.classList.add('active');
                 menuOverlay.classList.add('active');
                 menuToggleButton.setAttribute('aria-expanded', 'true');
                 settingsMenu.setAttribute('aria-hidden', 'false');
 
                 if (gameActive) {
-                    console.log("Spiel aktiv, pausiere für Menü und aktiviere temporär Einstellungen.");
-                    disableBoardInteraction(true); 
-                    updateSettingsAccess(false);   
+                    disableBoardInteraction(true);
+                    updateSettingsAccess(false);
                     gameWasPausedByMenu = true;
                 } else {
-                    updateSettingsAccess(false); 
+                    updateSettingsAccess(false);
                 }
-            } else { 
+            } else {
                 settingsMenu.classList.remove('active');
                 menuOverlay.classList.remove('active');
                 menuToggleButton.setAttribute('aria-expanded', 'false');
                 settingsMenu.setAttribute('aria-hidden', 'true');
 
                 if (gameActive && gameWasPausedByMenu) {
-                    console.log("Menü geschlossen, setze pausiertes Spiel fort und sperre Einstellungen wieder.");
-                    disableBoardInteraction(false); 
-                    updateSettingsAccess(true);    
+                    // Nur Overlay entfernen, wenn Spiel tatsächlich weitergeht und nicht gerade neu gestartet wird
+                    if (!firstLoad) { // Verhindert das Entfernen des Overlays, wenn das Spiel gerade erst gestartet wird
+                         disableBoardInteraction(false);
+                    }
+                    updateSettingsAccess(true);
+                    // gameWasPausedByMenu wird in startGame oder abortGame behandelt
                 }
-                gameWasPausedByMenu = false; 
             }
         }
 
         async function handleApplySettingsAndStart() {
-            console.log("Apply settings and start button clicked.");
-            endGameActionsElement.style.display = 'none'; 
-            toggleMenu(false); 
-            
-            if (gameActive) {
-                console.log("Spiel war aktiv, wird für Neustart still abgebrochen.");
-                await abortGame(false); 
+            if (firstLoad) {
+                gameBoardElement.classList.remove('initial-focus-menu');
+                firstLoad = false;
             }
-            await startGame(); 
+
+            endGameActionsElement.style.display = 'none';
+            toggleMenu(false);
+
+            if (gameActive) {
+                await abortGame(false);
+            }
+            await startGame();
         }
 
         async function handlePlayAgain() {
-            console.log("Play Again Button clicked.");
-            endGameActionsElement.style.display = 'none'; 
-            endGameMessageElement.textContent = '';       
-            await handleApplySettingsAndStart(); 
+            endGameActionsElement.style.display = 'none';
+            endGameMessageElement.textContent = '';
+            await handleApplySettingsAndStart();
         }
 
-        // --- Spiel-Logik ---
         async function startGame() {
-            if (gameActive) { 
-                console.warn("Versuch, Spiel zu starten, während es schon aktiv ist. Ignoriere.");
-                return;
-            }
+            if (gameActive) return;
             gameActive = true;
-            console.log("Neues Spiel wird gestartet.");
             endGameMessageElement.textContent = '';
-            endGameActionsElement.style.display = 'none'; 
-            
-            if (!audioContext) { 
-                try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } 
-                catch (e) { console.warn("Audio API nicht unterstützt.", e); }
-            }
-            if (audioContext && audioContext.state === 'suspended') {
-                try { await audioContext.resume(); } catch(e) { console.warn("AudioContext resume failed", e); }
-            }
+            endGameActionsElement.style.display = 'none';
+
+            await ensureAudioContext();
 
             sequenceLength = parseInt(sequenceLengthSelect.value);
             totalRounds = parseInt(numRoundsSelect.value);
             wordSpacing = parseInt(wordSpacingSelect.value);
             currentRound = 0; correctRounds = 0; playerSequence = []; roundAttempts = 0;
-            gameWasPausedByMenu = false; 
+            gameWasPausedByMenu = false;
 
-            updateButtonStates(true);     
-            updateSettingsAccess(true);  
+            updateButtonStates(true);
+            updateSettingsAccess(true);
             initializeProgressCircles(totalRounds);
             await nextRound();
         }
 
-        async function abortGame(showMessage = true) { 
-            console.log("abortGame aufgerufen, showMessage:", showMessage);
-            endGameActionsElement.style.display = 'none'; 
-            if (!gameActive && !showMessage && !gameWasPausedByMenu) return; 
+        async function abortGame(showMessage = true) {
+            if (!gameActive && !showMessage && !gameWasPausedByMenu) return;
 
             gameActive = false;
             currentSequence = []; playerSequence = [];
-            gameWasPausedByMenu = false; 
+            gameWasPausedByMenu = false;
 
-            updateButtonStates(false); 
-            updateSettingsAccess(false); 
-            clearProgressCircles(); 
-            disableBoardInteraction(false); 
+            updateButtonStates(false);
+            updateSettingsAccess(false);
+            clearProgressCircles();
+            disableBoardInteraction(false);
 
             document.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
                 t.classList.remove('active'); t.classList.remove('error-input');
             });
             if (showMessage) endGameMessageElement.textContent = 'Spiel abgebrochen.';
             else endGameMessageElement.textContent = '';
-            
+
             if ('speechSynthesis' in window && speechSynthesis.speaking) speechSynthesis.cancel();
             await sleep(50);
         }
 
         function updateButtonStates(isPlaying) {
             repeatButton.disabled = !isPlaying || currentSequence.length === 0 || (boardOverlay.style.display === 'block' && !gameWasPausedByMenu) ;
-         }
-        
+        }
+
         function updateSettingsAccess(gameIsRunning) {
-            console.log("updateSettingsAccess called, gameIsRunning:", gameIsRunning);
             sequenceLengthSelect.disabled = gameIsRunning;
             numRoundsSelect.disabled = gameIsRunning;
             wordSpacingSelect.disabled = gameIsRunning;
@@ -608,7 +662,7 @@
             const ttsGenerallyAvailable = 'speechSynthesis' in window;
             const voicesLoaded = speechSynthesis.getVoices().length > 0;
 
-            if (!ttsGenerallyAvailable || (!voicesLoaded && availableVoices.length === 0)) { 
+            if (!ttsGenerallyAvailable || (!voicesLoaded && availableVoices.length === 0)) {
                 voiceSelect.disabled = true;
                 const defaultOption = voiceSelect.querySelector('option[value=""]');
                 if (defaultOption && !defaultOption.textContent.includes("nicht verfügbar")) {
@@ -617,18 +671,17 @@
             } else {
                 if (gameIsRunning) {
                     voiceSelect.disabled = true;
-                } else { 
-                    const noGermanOptionNode = voiceSelect.options[0]; 
-                    const onlyNoGermanOptionPresent = voiceSelect.options.length === 1 && 
-                                                   noGermanOptionNode && 
+                } else {
+                    const noGermanOptionNode = voiceSelect.options[0];
+                    const onlyNoGermanOptionPresent = voiceSelect.options.length === 1 &&
+                                                   noGermanOptionNode &&
                                                    noGermanOptionNode.textContent.includes("Keine dt. Stimme");
                     voiceSelect.disabled = onlyNoGermanOptionPresent;
                 }
             }
         }
 
-
-        function initializeProgressCircles(num) { 
+        function initializeProgressCircles(num) {
             progressCirclesContainer.innerHTML = '';
             for (let i = 0; i < num; i++) {
                 const circle = document.createElement('div');
@@ -643,28 +696,29 @@
                 circles[roundIndex].classList.remove('correct', 'incorrect');
                 circles[roundIndex].classList.add(isCorrect ? 'correct' : 'incorrect');
             }
-         }
+        }
         function disableBoardInteraction(disable) { boardOverlay.style.display = disable ? 'block' : 'none'; }
-        
-        async function nextRound() { 
+
+        async function nextRound() {
             if (!gameActive) return;
-            if (currentRound >= totalRounds) { await endGame(); return; } 
-            
-            playerSequence = []; roundAttempts = 0; 
-            disableBoardInteraction(true); repeatButton.disabled = true; 
+            if (currentRound >= totalRounds) { await endGame(); return; }
+
+            playerSequence = []; roundAttempts = 0;
+            disableBoardInteraction(true); repeatButton.disabled = true;
             currentSequence = generateRandomSequence(sequenceLength);
             console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
 
-            await sleep(500); 
+            await sleep(500);
             await playSequence(currentSequence);
-            
-            if (gameActive && !gameWasPausedByMenu) { 
-                disableBoardInteraction(false); 
-                updateButtonStates(true); 
+
+            if (gameActive && !gameWasPausedByMenu) {
+                disableBoardInteraction(false);
+                updateButtonStates(true);
             } else if (gameActive && gameWasPausedByMenu) {
-                updateButtonStates(true); 
+                updateButtonStates(true);
             }
         }
+
         function generateRandomSequence(length) {
             const sequence = [];
             for (let i = 0; i < length; i++) {
@@ -672,50 +726,55 @@
                 sequence.push(EMOJIS_DATA[randomIndex].id);
             }
             return sequence;
-         }
+        }
+
         async function playSequence(sequence, isRepeat = false) {
             if (!gameActive && !isRepeat) return;
 
-            disableBoardInteraction(true); 
+            disableBoardInteraction(true);
             repeatButton.disabled = true;
 
             for (const itemId of sequence) {
-                if (!gameActive && !isRepeat) break; 
+                if (!gameActive && !isRepeat) break;
                 const itemData = EMOJIS_DATA.find(d => d.id === itemId);
                 const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
                 if (itemData && tileElement) {
                     tileElement.classList.add('active');
-                    await speak(itemData.word); 
-                    await sleep(100); 
+                    await speak(itemData.word);
+                    await sleep(100);
                     tileElement.classList.remove('active');
                 }
-                if (gameActive || isRepeat) await sleep(wordSpacing); 
-                else break; 
+                if (gameActive || isRepeat) await sleep(wordSpacing);
+                else break;
             }
-            
-            if (gameActive) { 
-                if (!gameWasPausedByMenu) { 
+
+            if (gameActive) {
+                if (!gameWasPausedByMenu) {
                     disableBoardInteraction(false);
                 }
                 updateButtonStates(true);
-            } else if (isRepeat) { 
-                disableBoardInteraction(false); 
+            } else if (isRepeat) {
+                 disableBoardInteraction(false);
             }
-         }
-        async function repeatCurrentSequence() { 
+        }
+
+        async function repeatCurrentSequence() {
             if (!gameActive || currentSequence.length === 0 || boardOverlay.style.display === 'block' || gameWasPausedByMenu) return;
-            console.log("Wiederhole Sequenz manuell...");
             await playSequence(currentSequence, true);
         }
+
         function speak(text) {
-            return new Promise((resolve) => {
+            return new Promise(async (resolve) => {
                 if (!('speechSynthesis' in window) || !text) { resolve(); return; }
-                if (speechSynthesis.speaking) speechSynthesis.cancel(); 
+                if (speechSynthesis.speaking) {
+                    speechSynthesis.cancel();
+                    await sleep(50);
+                }
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'de-DE'; 
+                utterance.lang = 'de-DE';
                 if (selectedVoice) utterance.voice = selectedVoice;
                 else {
-                    const defaultGermanVoice = speechSynthesis.getVoices().find(v => v.lang.startsWith('de') && v.default) || 
+                    const defaultGermanVoice = speechSynthesis.getVoices().find(v => v.lang.startsWith('de') && v.default) ||
                                              speechSynthesis.getVoices().find(v => v.lang.startsWith('de'));
                     if (defaultGermanVoice) utterance.voice = defaultGermanVoice;
                 }
@@ -723,39 +782,30 @@
                 utterance.onerror = (event) => { console.error('TTS Error:', event); resolve(); };
                 speechSynthesis.speak(utterance);
             });
-         }
-        
-        async function playClickSound() {
-            if (!audioContext || audioContext.state === 'closed') {
-                if (!audioContext || audioContext.state === 'closed') { 
-                    try {
-                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    } catch (e) { console.warn("AudioContext für Klick nicht init.", e); return; }
-                }
-            }
-            if (audioContext.state === 'suspended') {
-                try { await audioContext.resume(); } 
-                catch(e) { console.warn("AudioContext resume für Klick fehlgeschlagen.", e); return; }
-            }
+        }
 
-            const clickTime = audioContext.currentTime;
-            const oscillator = audioContext.createOscillator();
-            oscillator.type = 'triangle'; 
-            oscillator.frequency.setValueAtTime(800, clickTime); 
-            oscillator.frequency.exponentialRampToValueAtTime(400, clickTime + 0.05); 
-            const gainNode = audioContext.createGain();
-            gainNode.gain.setValueAtTime(0.15, clickTime); 
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, clickTime + 0.08); 
+        async function playClickSound() {
+            const ctx = await ensureAudioContext();
+            if (!ctx) return;
+
+            const clickTime = ctx.currentTime;
+            const oscillator = ctx.createOscillator();
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(800, clickTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, clickTime + 0.05);
+            const gainNode = ctx.createGain();
+            gainNode.gain.setValueAtTime(0.15, clickTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, clickTime + 0.08);
             oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            gainNode.connect(ctx.destination);
             oscillator.start(clickTime);
-            oscillator.stop(clickTime + 0.08); 
+            oscillator.stop(clickTime + 0.08);
         }
 
         async function handleTileClick(itemId) {
             if (!gameActive || boardOverlay.style.display === 'block' || playerSequence.length >= currentSequence.length) return;
 
-            playClickSound(); 
+            playClickSound();
 
             const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
             playerSequence.push(itemId);
@@ -773,47 +823,42 @@
                     tileElement.classList.add('error-input');
                     setTimeout(() => tileElement.classList.remove('error-input'), 600);
                 }
-                playerSequence.pop(); 
+                playerSequence.pop();
                 await evaluatePlayerInput(false);
             }
         }
         async function playErrorSound() {
-            if (!audioContext || audioContext.state === 'closed') { console.warn("AudioContext für Fehler-Sound nicht bereit."); return; }
-            if (audioContext.state === 'suspended') {
-                try { await audioContext.resume(); } catch(e) { console.warn("Resume für Fehler-Sound fehlgeschlagen."); return; }
-            }
+            const ctx = await ensureAudioContext();
+            if (!ctx) return;
 
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode); gainNode.connect(audioContext.destination);
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            oscillator.connect(gainNode); gainNode.connect(ctx.destination);
             oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(120, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(120, ctx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
             const duration = 0.2;
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + duration);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + duration);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
             await sleep(duration * 1000 + 50);
-         }
+        }
 
         async function evaluatePlayerInput(isCorrectInput) {
-            if (!gameActive) return; 
+            if (!gameActive) return;
             disableBoardInteraction(true); repeatButton.disabled = true;
 
             if (isCorrectInput) {
                 updateProgressCircle(currentRound, true); correctRounds++;
-                console.log("Runde korrekt, warte kurz, dann spiele Erfolgsmelodie.");
-                
-                await sleep(150); // Verzögerung vor dem Runden-Erfolgs-Jingle
-
-                await playFixedRewardMelody(true); 
+                await sleep(150);
+                await playFixedRewardMelody(true);
                 currentRound++; playerSequence = []; roundAttempts = 0;
-                await sleep(100); 
+                await sleep(100);
                 await nextRound();
             } else {
                 roundAttempts++;
                 updateProgressCircle(currentRound, false);
-                await playErrorSound(); 
+                await playErrorSound();
 
                 if (roundAttempts >= MAX_ATTEMPTS_PER_ROUND) {
                     endGameMessageElement.textContent = `Sequenz nicht geschafft. Nächste Runde...`;
@@ -823,87 +868,65 @@
                     await nextRound();
                 } else {
                     endGameMessageElement.textContent = 'Nicht ganz! Hör genau zu.';
-                    playerSequence = []; 
-                    await sleep(1000); 
+                    playerSequence = [];
+                    await sleep(1000);
                     endGameMessageElement.textContent = '';
-                    await playSequence(currentSequence, true); 
+                    await playSequence(currentSequence, true);
                 }
             }
-         }
+        }
 
         async function endGame() {
-            console.log("endGame called");
-            const wasActuallyActive = gameActive; 
-            gameActive = false; 
-            gameWasPausedByMenu = false; 
+            const wasActuallyActive = gameActive;
+            gameActive = false;
+            gameWasPausedByMenu = false;
 
-            disableBoardInteraction(false); 
-            updateButtonStates(false); 
-            updateSettingsAccess(false);  
+            disableBoardInteraction(false);
+            updateButtonStates(false);
+            updateSettingsAccess(false);
 
-            if (wasActuallyActive) { 
+            if (wasActuallyActive) {
                 const successRate = totalRounds > 0 ? (correctRounds / totalRounds) * 100 : 0;
                 const message = `Spiel beendet! ${correctRounds} von ${totalRounds} richtig (${successRate.toFixed(0)}%).`;
                 endGameMessageElement.textContent = message;
-                console.log("Success rate:", successRate);
 
                 if (successRate >= 75) {
-                    console.log("Attempting to play end reward melody (success >= 75%).");
-                    await playFixedRewardMelody(false); 
+                    await playFixedRewardMelody(false);
                 } else {
-                    console.log("Not playing end reward melody (success < 75%).");
-                    await sleep(300); 
+                    await sleep(300);
                 }
-                endGameActionsElement.style.display = 'flex'; 
-                endGameActionsElement.style.justifyContent = 'center'; 
+                endGameActionsElement.style.display = 'flex';
+                endGameActionsElement.style.justifyContent = 'center';
             } else {
-                endGameMessageElement.textContent = ''; 
-                endGameActionsElement.style.display = 'none'; 
+                endGameMessageElement.textContent = '';
+                endGameActionsElement.style.display = 'none';
             }
         }
-        
+
         async function playFixedRewardMelody(isRoundSuccessSound = false) {
-            console.log("playFixedRewardMelody called with isRoundSuccessSound:", isRoundSuccessSound);
-            if (!audioContext || audioContext.state === 'closed') {
-                console.warn("AudioContext für Melodie nicht bereit oder geschlossen.");
-                return;
-            }
-            if (audioContext.state === 'suspended') {
-                try {
-                    console.log("AudioContext ist suspended, versuche resume...");
-                    await audioContext.resume();
-                    console.log("AudioContext resumed, state:", audioContext.state);
-                } catch (e) {
-                    console.warn("AudioContext konnte nicht fortgesetzt werden für Melodie.", e);
-                    return;
-                }
-            }
+            const ctx = await ensureAudioContext();
+            if (!ctx) return;
 
             let melody; let baseNoteDuration; let basePauseBetweenNotes; let gainValue;
 
             if (isRoundSuccessSound) {
-                melody = [NOTE.C5, NOTE.E5, NOTE.G5]; 
+                melody = [NOTE.C5, NOTE.E5, NOTE.G5];
                 baseNoteDuration = 0.12; basePauseBetweenNotes = 0.04; gainValue = 0.15;
-            } else { 
+            } else {
                 const randomMelodyIndex = Math.floor(Math.random() * REWARD_MELODIES.length);
                 melody = REWARD_MELODIES[randomMelodyIndex];
                 baseNoteDuration = 0.25; basePauseBetweenNotes = 0.08; gainValue = 0.25;
-                console.log("Playing END reward melody:", melody ? melody.length : 0, "notes");
             }
 
-            if (!melody || melody.length === 0) { console.warn("Keine Melodie zum Spielen ausgewählt."); return; }
+            if (!melody || melody.length === 0) return;
 
-            let currentTime = audioContext.currentTime + 0.05;
+            let currentTime = ctx.currentTime + 0.05;
             for (const frequency of melody) {
-                if (isRoundSuccessSound && !gameActive && audioContext.state !== 'closed') {
-                    console.log("Runden-Erfolgsmelodie abgebrochen, da Spiel nicht mehr aktiv.");
-                    break;
-                }
                 if (frequency === NOTE.PAUSE) { currentTime += baseNoteDuration + basePauseBetweenNotes; continue; }
 
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                oscillator.connect(gainNode); gainNode.connect(audioContext.destination);
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                oscillator.connect(gainNode); gainNode.connect(ctx.destination);
                 oscillator.frequency.setValueAtTime(frequency, currentTime);
                 oscillator.type = 'sine';
                 gainNode.gain.setValueAtTime(gainValue, currentTime);
@@ -912,12 +935,11 @@
                 oscillator.stop(currentTime + baseNoteDuration);
                 currentTime += baseNoteDuration + basePauseBetweenNotes;
             }
-            const melodyDurationMs = Math.max(0, (currentTime - (audioContext.currentTime + 0.05))) * 1000;
+            const melodyDurationMs = Math.max(0, (currentTime - (ctx.currentTime + 0.05))) * 1000;
             if (melodyDurationMs > 0) {
                 await sleep(melodyDurationMs + 50);
             }
-            console.log("Melodie beendet (isRoundSuccessSound:", isRoundSuccessSound, ")");
-         }
+        }
         function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
     </script>
 </body>
