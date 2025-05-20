@@ -85,7 +85,7 @@
         .settings-menu-content {
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Wichtig, damit margin-top: auto für Logo funktioniert */
+            flex-grow: 1;
         }
 
         .settings-menu-content .settings {
@@ -128,27 +128,9 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            /* margin-top: auto; */ /* Entfernt, damit Logo unten platziert werden kann */
-            margin-bottom: 20px; /* Abstand zum Logo */
+            margin-top: auto;
         }
         .apply-button:hover { background-color: #1e7e34; }
-
-        .settings-menu-logo-container {
-            margin-top: auto; /* Drückt das Logo nach unten */
-            padding-top: 20px; /* Abstand nach oben */
-            padding-bottom: 15px; /* Abstand zum unteren Menürand */
-            display: flex;
-            justify-content: center; /* Zentriert das Logo horizontal */
-            align-items: center;
-        }
-
-        #menuLogo {
-            max-width: 70px;  /* Passe die Größe an dein Logo an */
-            max-height: 70px; /* Passe die Größe an dein Logo an */
-            width: auto;
-            height: auto;
-            /* border-radius: 8px; */ /* Optional */
-        }
 
         .menu-overlay {
             position: fixed;
@@ -169,12 +151,14 @@
 
         .container {
             background-color: #fff;
-            padding: 20px;
+            padding: 20px; /* Standard-Padding oben, links, rechts */
+            padding-bottom: 70px; /* Erhöhtes Padding unten für das Logo (Logo Höhe + Abstand) */
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             text-align: center;
             width: 100%;
             max-width: 400px;
+            position: relative; /* Wichtig für absolute Positionierung des Logos */
         }
 
         h1 {
@@ -200,7 +184,6 @@
         .game-board.initial-focus-menu .overlay {
             background-color: rgba(200, 200, 200, 0.5);
         }
-
 
         .tile {
             background-color: #e0e0e0;
@@ -255,8 +238,12 @@
 
         .controls {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Zentriert den Wiederhol-Button */
+            align-items: center;
             margin-top: 20px;
+            /* gap: 15px; */ /* Nicht mehr nötig, da Logo absolut ist */
+             /* Höhe der Controls, falls benötigt für vertikale Ausrichtung,
+               aber durch padding-bottom im container ist unten Platz */
         }
         .round-icon-button {
             background-color: #ffc107; color: #333; border: none;
@@ -271,6 +258,15 @@
         .round-icon-button:disabled {
             background-color: #c0c0c0; color: #888;
             cursor: not-allowed; box-shadow: none;
+        }
+
+        #controlBarLogo {
+            position: absolute;
+            right: 20px;  /* Abstand vom rechten Rand des .container */
+            bottom: 20px; /* Abstand vom unteren Rand des .container */
+            width: 40px;  /* Gewünschte Größe des Logos */
+            height: 40px;
+            object-fit: contain;
         }
 
         #endGameMessage {
@@ -309,7 +305,16 @@
 
         @media (max-width: 320px) {
             .tile { font-size: 2em; }
-            .container { padding: 15px; }
+            .container {
+                padding: 15px; /* Standard-Padding oben, links, rechts für kleine Bildschirme */
+                padding-bottom: 60px; /* Erhöhtes Padding unten (Logo Höhe + Abstand) anpassen */
+            }
+            #controlBarLogo {
+                right: 15px;
+                bottom: 15px;
+                width: 35px;
+                height: 35px;
+            }
         }
     </style>
 </head>
@@ -357,11 +362,6 @@
                 </div>
             </div>
             <button id="applySettingsAndStartButton" class="apply-button">Spiel Starten / Übernehmen</button>
-
-            <div class="settings-menu-logo-container">
-                <!-- ERSETZE 'pfad/zu/deinem/logo.png' MIT DEM KORREKTEN PFAD ZU DEINEM LOGO -->
-                <img src="images/logo.png" alt="Mein Firmenlogo" id="menuLogo">
-            </div>
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -377,14 +377,18 @@
             <button id="playAgainButton">Nochmal spielen?</button>
         </div>
         <div class="progress-circles" id="progressCircles"></div>
-        <div class="controls">
+        <div class="controls" id="gameControls">
             <button id="repeatButton" class="round-icon-button" disabled aria-label="Sequenz wiederholen">
                 ↺
             </button>
+            <!-- ERSETZE 'images/logo.png' MIT DEM KORREKTEN PFAD ZU DEINEM LOGO -->
+            <img src="images/logo.png" alt="Firmenlogo" id="controlBarLogo">
         </div>
     </div>
 
     <script>
+        // Kompletter JavaScript-Code bleibt wie in der vorherigen Version
+        // ... (bitte den JavaScript-Code von der vorherigen Antwort hier einfügen) ...
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
@@ -447,7 +451,6 @@
             if (!audioContext || audioContext.state === 'closed') {
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    console.log("AudioContext neu erstellt. Status:", audioContext.state);
                 } catch (e) {
                     console.warn("AudioContext konnte nicht initialisiert werden.", e);
                     return null;
@@ -456,7 +459,6 @@
             if (audioContext.state === 'suspended') {
                 try {
                     await audioContext.resume();
-                    console.log("AudioContext resumed. Status:", audioContext.state);
                 } catch (e) {
                     console.warn("AudioContext resume fehlgeschlagen.", e);
                     return null;
@@ -577,12 +579,10 @@
                 settingsMenu.setAttribute('aria-hidden', 'true');
 
                 if (gameActive && gameWasPausedByMenu) {
-                    // Nur Overlay entfernen, wenn Spiel tatsächlich weitergeht und nicht gerade neu gestartet wird
-                    if (!firstLoad) { // Verhindert das Entfernen des Overlays, wenn das Spiel gerade erst gestartet wird
+                    if (!firstLoad) {
                          disableBoardInteraction(false);
                     }
                     updateSettingsAccess(true);
-                    // gameWasPausedByMenu wird in startGame oder abortGame behandelt
                 }
             }
         }
