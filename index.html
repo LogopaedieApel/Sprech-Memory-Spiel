@@ -52,9 +52,8 @@
             z-index: 1001;
             display: flex;
             flex-direction: column;
-            padding: 15px; /* Padding für das gesamte Menü (Header und Rand des Contents) */
+            padding: 15px;
             box-sizing: border-box;
-            /* overflow-y: auto; */ /* Entfernt von hier */
         }
 
         .settings-menu.active {
@@ -65,10 +64,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px; /* Abstand zum Content-Bereich */
+            margin-bottom: 20px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
-            flex-shrink: 0; /* Verhindert, dass der Header schrumpft */
+            flex-shrink: 0;
         }
         .settings-menu-header h2 { margin: 0; color: #333; font-size: 1.4em; }
 
@@ -86,16 +85,17 @@
         .settings-menu-content {
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Nimmt den restlichen Platz ein */
-            overflow-y: auto; /* HIER IST JETZT DIE SCROLLBAR für den Inhalt */
-            min-height: 0; /* Hilft bei Flexbox-Overflow-Berechnungen */
+            flex-grow: 1;
+            overflow-y: auto;
+            overscroll-behavior-y: contain; /* Verhindert Scroll-Chaining auf der Y-Achse */
+            min-height: 0;
         }
 
         .settings-menu-content .settings {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 25px; /* Abstand zum Apply-Button */
+            margin-bottom: 25px;
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -131,8 +131,8 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: auto; /* Drückt Button nach unten im .settings-menu-content */
-            flex-shrink: 0; /* Verhindert, dass der Button schrumpft */
+            margin-top: auto;
+            flex-shrink: 0;
         }
         .apply-button:hover { background-color: #1e7e34; }
 
@@ -156,7 +156,7 @@
         .container {
             background-color: #fff;
             padding: 20px;
-            padding-bottom: 70px; /* Platz für das absolut positionierte Logo */
+            padding-bottom: 70px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             text-align: center;
@@ -308,7 +308,7 @@
             .tile { font-size: 2em; }
             .container {
                 padding: 15px;
-                padding-bottom: 60px; /* Ggf. anpassen, wenn Logo-Größe in Media Query geändert wird */
+                padding-bottom: 60px;
             }
             #controlBarLogo {
                 right: 15px;
@@ -562,6 +562,7 @@
                 menuOverlay.classList.add('active');
                 menuToggleButton.setAttribute('aria-expanded', 'true');
                 settingsMenu.setAttribute('aria-hidden', 'false');
+                // document.body.classList.add('no-scroll'); // Für JS-Lösung (Lösung 2), falls nötig
 
                 if (gameActive) {
                     disableBoardInteraction(true);
@@ -575,6 +576,7 @@
                 menuOverlay.classList.remove('active');
                 menuToggleButton.setAttribute('aria-expanded', 'false');
                 settingsMenu.setAttribute('aria-hidden', 'true');
+                // document.body.classList.remove('no-scroll'); // Für JS-Lösung (Lösung 2), falls nötig
 
                 if (gameActive && gameWasPausedByMenu) {
                     if (!firstLoad) {
