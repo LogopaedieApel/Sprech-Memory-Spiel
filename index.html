@@ -24,18 +24,20 @@
             top: 10px;
             right: 10px;
             z-index: 1002;
-            background: #007bff;
-            color: white;
+            background: none;              /* HINTERGRUND ENTFERNT */
+            color: #94bbb5;                /* NEUE FARBE FÜR BALKEN */
             border: none;
-            padding: 8px 12px;
+            padding: 8px;                  /* PADDING ANGEPASST */
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.4em;
+            font-size: 2em;                /* GRÖSSE DER BALKEN ANGEPASST */
             line-height: 1;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: none;              /* SCHATTEN ENTFERNT */
+            -webkit-tap-highlight-color: transparent; /* Für besseres mobiles Tapping */
         }
          .menu-toggle-button:hover {
-            background-color: #0056b3;
+            /* background-color: #0056b3; */ /* Hover für Hintergrund entfernt */
+            color: #7a9f9a;                /* Optional: Hover-Farbe für Balken */
         }
 
         .settings-menu {
@@ -95,7 +97,6 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            /* margin-bottom: 25px; Entfernt, Abstand wird vom Button gesteuert */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -131,9 +132,8 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            /* margin-top: auto; */ /* Entfernt, um Button näher an Inhalt zu rücken */
-            margin-top: 30px;     /* Fester Abstand zu den Einstellungen */
-            margin-bottom: 15px;  /* Optional: Abstand nach unten, wenn gescrollt wird */
+            margin-top: 30px;
+            margin-bottom: 15px;
             flex-shrink: 0;
         }
         .apply-button:hover { background-color: #1e7e34; }
@@ -389,6 +389,8 @@
     </div>
 
     <script>
+        // Kompletter JavaScript-Code bleibt wie in der vorherigen Version
+        // ... (bitte den JavaScript-Code von der vorherigen Antwort hier einfügen) ...
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
