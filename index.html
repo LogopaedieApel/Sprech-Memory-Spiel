@@ -67,7 +67,7 @@
             z-index: 1001;
             display: flex;
             flex-direction: column;
-            box-sizing: border-box; /* Wichtig für Padding-Berechnung */
+            box-sizing: border-box;
             /* Inneres Padding des Menüs, um Safe Areas zu berücksichtigen */
             padding-top: calc(env(safe-area-inset-top, 0px) + 15px);
             padding-left: calc(env(safe-area-inset-left, 0px) + 15px);
@@ -139,8 +139,8 @@
         }
 
         .apply-button {
-            background-color: #007bff; /* DEINE ANGEPASSTE FARBE */
-            color: white;             /* DEINE ANGEPASSTE TEXTFARBE */
+            background-color: #007bff;
+            color: white;
             padding: 12px 18px;
             border: none;
             border-radius: 5px;
@@ -153,7 +153,7 @@
             flex-shrink: 0;
         }
         .apply-button:hover {
-             background-color: #0056b3; /* DEINE ANGEPASSTE HOVER-FARBE */
+             background-color: #0056b3;
         }
 
         .menu-overlay {
@@ -187,7 +187,7 @@
             position: relative;
             margin-left: auto;
             margin-right: auto;
-            margin-top: 60px;
+            margin-top: 60px; /* Abstand damit der Container unter dem Menü-Toggle-Button beginnt */
             margin-bottom: 20px;
         }
 
@@ -289,6 +289,7 @@
 
         #controlBarLogo {
             position: absolute;
+            /* Positionierung relativ zu den Kanten des .container */
             right: 20px;
             bottom: 20px;
             width: 40px;
@@ -391,7 +392,6 @@
                     <select id="voiceSelect"><option value="">Standard</option></select>
                 </div>
             </div>
-            <!-- KORRIGIERTER BUTTON-TEXT -->
             <button id="applySettingsAndStartButton" class="apply-button">Start</button>
         </div>
     </div>
@@ -418,7 +418,6 @@
 
     <script>
         // Paste your existing JavaScript code here
-        // ... (Der JavaScript-Teil bleibt unverändert zur Version, die das Menü-Scrollen und die Button-Positionierung korrekt hatte)
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
@@ -609,10 +608,10 @@
                 settingsMenu.setAttribute('aria-hidden', 'true');
 
                 // JavaScript Repaint Workaround für iOS (kannst du einkommentieren, wenn Darstellungsprobleme nach Menüschließen bestehen)
-                if (navigator.userAgent.match(/iPhone|iPad|iPod/i) && !gameActive && !firstLoad) { // Nur wenn Menü geschlossen wird und Spiel nicht aktiv ist (oder gerade startet)
-                    const forceReflow = el => el.offsetHeight;
-                    forceReflow(document.body); // Dies kann einen Reflow erzwingen
-                }
+                // if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                //     const forceReflow = el => el.offsetHeight; // Trick, um Reflow zu erzwingen
+                //     forceReflow(document.body);
+                // }
 
 
                 if (gameActive && gameWasPausedByMenu) {
