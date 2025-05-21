@@ -87,7 +87,7 @@
             flex-direction: column;
             flex-grow: 1;
             overflow-y: auto;
-            overscroll-behavior-y: contain; /* Verhindert Scroll-Chaining auf der Y-Achse */
+            overscroll-behavior-y: contain;
             min-height: 0;
         }
 
@@ -95,7 +95,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 25px;
+            /* margin-bottom: 25px; Entfernt, Abstand wird vom Button gesteuert */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -131,7 +131,9 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: auto;
+            /* margin-top: auto; */ /* Entfernt, um Button näher an Inhalt zu rücken */
+            margin-top: 30px;     /* Fester Abstand zu den Einstellungen */
+            margin-bottom: 15px;  /* Optional: Abstand nach unten, wenn gescrollt wird */
             flex-shrink: 0;
         }
         .apply-button:hover { background-color: #1e7e34; }
@@ -562,7 +564,6 @@
                 menuOverlay.classList.add('active');
                 menuToggleButton.setAttribute('aria-expanded', 'true');
                 settingsMenu.setAttribute('aria-hidden', 'false');
-                // document.body.classList.add('no-scroll'); // Für JS-Lösung (Lösung 2), falls nötig
 
                 if (gameActive) {
                     disableBoardInteraction(true);
@@ -576,7 +577,6 @@
                 menuOverlay.classList.remove('active');
                 menuToggleButton.setAttribute('aria-expanded', 'false');
                 settingsMenu.setAttribute('aria-hidden', 'true');
-                // document.body.classList.remove('no-scroll'); // Für JS-Lösung (Lösung 2), falls nötig
 
                 if (gameActive && gameWasPausedByMenu) {
                     if (!firstLoad) {
