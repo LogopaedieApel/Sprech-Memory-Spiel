@@ -7,6 +7,12 @@
     <style>
         html {
             height: 100%;
+            background-color: #f0f0f0; /* Hintergrund für den gesamten Viewport */
+            box-sizing: border-box;
+        }
+
+        *, *::before, *::after {
+            box-sizing: inherit;
         }
 
         body {
@@ -14,14 +20,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
             min-height: 100%;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #f0f0f0; /* Stellt sicher, dass der Body-Bereich die Farbe hat */
             color: #333;
-            box-sizing: border-box;
 
-            padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+            /* Paddings für Safe Areas direkt am Body */
+            padding-top: env(safe-area-inset-top, 0px);
             padding-left: env(safe-area-inset-left, 0px);
             padding-right: env(safe-area-inset-right, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -29,6 +34,7 @@
 
         .menu-toggle-button {
             position: fixed;
+            /* Positionierung relativ zu den Safe Areas */
             top: calc(env(safe-area-inset-top, 0px) + 10px);
             right: calc(env(safe-area-inset-right, 0px) + 10px);
             z-index: 1002;
@@ -49,11 +55,11 @@
 
         .settings-menu {
             position: fixed;
-            top: 0;
+            top: 0; /* Menü füllt von ganz oben */
             left: 0;
             width: 280px;
             max-width: 80%;
-            height: 100vh;
+            height: 100vh; /* Volle Viewport-Höhe */
             background-color: #f8f9fa;
             box-shadow: 3px 0px 10px rgba(0,0,0,0.1);
             transform: translateX(-100%);
@@ -62,6 +68,7 @@
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
+            /* Inneres Padding des Menüs, um Safe Areas zu berücksichtigen */
             padding-top: calc(env(safe-area-inset-top, 0px) + 15px);
             padding-left: calc(env(safe-area-inset-left, 0px) + 15px);
             padding-right: calc(env(safe-area-inset-right, 0px) + 15px);
@@ -124,7 +131,6 @@
             border: 1px solid #ccc;
             font-size: 1em;
             width: 100%;
-            box-sizing: border-box;
         }
         .settings-menu-content .settings select:disabled {
             background-color: #e9ecef;
@@ -133,7 +139,7 @@
         }
 
         .apply-button {
-            background-color: #94bbb5;
+            background-color: #007bff;
             color: white;
             padding: 12px 18px;
             border: none;
@@ -146,7 +152,9 @@
             margin-bottom: 15px;
             flex-shrink: 0;
         }
-        .apply-button:hover { background-color: #85a8a2; }
+        .apply-button:hover {
+             background-color: #0056b3;
+        }
 
         .menu-overlay {
             position: fixed;
@@ -167,7 +175,9 @@
 
         .container {
             background-color: #fff;
-            padding: 20px;
+            padding-top: 40px;
+            padding-right: 20px;
+            padding-left: 20px;
             padding-bottom: 70px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
@@ -175,8 +185,10 @@
             width: 100%;
             max-width: 400px;
             position: relative;
-            margin-left: auto; /* Zentriert den Container, wenn body padding-left hat */
-            margin-right: auto;/* Zentriert den Container, wenn body padding-right hat */
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 60px; /* Abstand damit der Container unter dem Menü-Toggle-Button beginnt */
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -277,8 +289,9 @@
 
         #controlBarLogo {
             position: absolute;
-            right: calc(env(safe-area-inset-right, 0px) + 20px);
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+            /* Positionierung relativ zu den Kanten des .container */
+            right: 20px;
+            bottom: 20px;
             width: 40px;
             height: 40px;
             object-fit: contain;
@@ -321,12 +334,15 @@
         @media (max-width: 320px) {
             .tile { font-size: 2em; }
             .container {
-                padding: 15px;
+                padding-top: 30px;
+                padding-right: 15px;
+                padding-left: 15px;
                 padding-bottom: 60px;
+                margin-top: 50px;
             }
             #controlBarLogo {
-                right: calc(env(safe-area-inset-right, 0px) + 15px);
-                bottom: calc(env(safe-area-inset-bottom, 0px) + 15px);
+                right: 15px;
+                bottom: 15px;
                 width: 35px;
                 height: 35px;
             }
@@ -346,7 +362,7 @@
         <div class="settings-menu-content">
             <div class="settings">
                 <div>
-                    <label for="sequenceLength">Anzahl der Wörter:</label>
+                    <label for="sequenceLength">Anzahl Töne:</label>
                     <select id="sequenceLength">
                         <option value="1">1</option><option value="2">2</option>
                         <option value="3" selected>3</option><option value="4">4</option>
@@ -362,7 +378,7 @@
                     </select>
                 </div>
                 <div>
-                    <label for="wordSpacing">Abstand zwischen Wörtern (ms):</label>
+                    <label for="wordSpacing">Abstand (ms):</label>
                     <select id="wordSpacing">
                         <option value="100">100</option><option value="200">200</option>
                         <option value="300">300</option><option value="400">400</option>
@@ -376,7 +392,7 @@
                     <select id="voiceSelect"><option value="">Standard</option></select>
                 </div>
             </div>
-            <button id="applySettingsAndStartButton" class="apply-button">Übung starten</button>
+            <button id="applySettingsAndStartButton" class="apply-button">Start</button>
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -402,7 +418,6 @@
 
     <script>
         // Paste your existing JavaScript code here
-        // ...
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
@@ -592,6 +607,13 @@
                 menuToggleButton.setAttribute('aria-expanded', 'false');
                 settingsMenu.setAttribute('aria-hidden', 'true');
 
+                // JavaScript Repaint Workaround für iOS (kannst du einkommentieren, wenn Darstellungsprobleme nach Menüschließen bestehen)
+                // if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                //     const forceReflow = el => el.offsetHeight; // Trick, um Reflow zu erzwingen
+                //     forceReflow(document.body);
+                // }
+
+
                 if (gameActive && gameWasPausedByMenu) {
                     if (!firstLoad) {
                          disableBoardInteraction(false);
@@ -608,7 +630,7 @@
             }
 
             endGameActionsElement.style.display = 'none';
-            toggleMenu(false);
+            toggleMenu(false); // Stellt sicher, dass das Menü geschlossen wird
 
             if (gameActive) {
                 await abortGame(false);
