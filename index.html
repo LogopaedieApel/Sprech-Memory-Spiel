@@ -2,42 +2,49 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Sequenz-Memory</title>
     <style>
+        html {
+            height: 100%;
+        }
+
         body {
             font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-height: 100vh;
+            min-height: 100%;
             margin: 0;
             background-color: #f0f0f0;
             color: #333;
-            padding-top: 60px;
             box-sizing: border-box;
+
+            padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         .menu-toggle-button {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            top: calc(env(safe-area-inset-top, 0px) + 10px);
+            right: calc(env(safe-area-inset-right, 0px) + 10px);
             z-index: 1002;
-            background: none;              /* HINTERGRUND ENTFERNT */
-            color: #94bbb5;                /* NEUE FARBE FÜR BALKEN */
+            background: none;
+            color: #94bbb5;
             border: none;
-            padding: 8px;                  /* PADDING ANGEPASST */
+            padding: 8px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 2em;                /* GRÖSSE DER BALKEN ANGEPASST */
+            font-size: 2em;
             line-height: 1;
-            box-shadow: none;              /* SCHATTEN ENTFERNT */
-            -webkit-tap-highlight-color: transparent; /* Für besseres mobiles Tapping */
+            box-shadow: none;
+            -webkit-tap-highlight-color: transparent;
         }
          .menu-toggle-button:hover {
-            /* background-color: #0056b3; */ /* Hover für Hintergrund entfernt */
-            color: #7a9f9a;                /* Optional: Hover-Farbe für Balken */
+            color: #7a9f9a;
         }
 
         .settings-menu {
@@ -54,8 +61,11 @@
             z-index: 1001;
             display: flex;
             flex-direction: column;
-            padding: 15px;
             box-sizing: border-box;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 15px);
+            padding-left: calc(env(safe-area-inset-left, 0px) + 15px);
+            padding-right: calc(env(safe-area-inset-right, 0px) + 15px);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 15px);
         }
 
         .settings-menu.active {
@@ -165,6 +175,8 @@
             width: 100%;
             max-width: 400px;
             position: relative;
+            margin-left: auto; /* Zentriert den Container, wenn body padding-left hat */
+            margin-right: auto;/* Zentriert den Container, wenn body padding-right hat */
         }
 
         h1 {
@@ -265,8 +277,8 @@
 
         #controlBarLogo {
             position: absolute;
-            right: 20px;
-            bottom: 20px;
+            right: calc(env(safe-area-inset-right, 0px) + 20px);
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
             width: 40px;
             height: 40px;
             object-fit: contain;
@@ -313,8 +325,8 @@
                 padding-bottom: 60px;
             }
             #controlBarLogo {
-                right: 15px;
-                bottom: 15px;
+                right: calc(env(safe-area-inset-right, 0px) + 15px);
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 15px);
                 width: 35px;
                 height: 35px;
             }
@@ -389,8 +401,8 @@
     </div>
 
     <script>
-        // Kompletter JavaScript-Code bleibt wie in der vorherigen Version
-        // ... (bitte den JavaScript-Code von der vorherigen Antwort hier einfügen) ...
+        // Paste your existing JavaScript code here
+        // ...
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
