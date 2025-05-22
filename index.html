@@ -296,12 +296,15 @@
 
         #controlBarLogo {
             position: fixed;
-            /* Positionierung relativ zu den Kanten des .container */
-            right: 20px;
-            bottom: 20px;
+            /* <<< ÄNDERUNG: von absolute zu fixed */
+            /* Positionierung relativ zu den Kanten des Viewports,
+               unter Berücksichtigung der Safe Areas */
+            right: calc(env(safe-area-inset-right, 0px) + 20px);
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
             width: 40px;
             height: 40px;
             object-fit: contain;
+            z-index: 999; /* Optional: Stelle sicher, dass es über dem meisten Inhalt, aber unter dem Menü/Overlay liegt */
         }
 
         #endGameMessage {
