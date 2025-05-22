@@ -538,7 +538,7 @@
 
         async function ensureAudioContext() {
             if (!audioContext || audioContext.state === 'closed') {
-                // console.log("AudioContext wird neu erstellt.");
+                console.log("AudioContext wird neu erstellt.");
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 } catch (e) {
@@ -546,18 +546,18 @@
                     return null;
                 }
             }
-            // console.log("AudioContext Status vor resume:", audioContext.state);
+             console.log("AudioContext Status:", audioContext.state);
             if (audioContext.state === 'suspended') {
-                // console.log("AudioContext ist suspended, versuche resume().");
+                console.log("AudioContext ist suspended, versuche resume().");
                 try {
                     await audioContext.resume();
-                    // console.log("AudioContext resumed erfolgreich.");
+                     console.log("AudioContext resumed erfolgreich.");
                 } catch (e) {
                     console.warn("AudioContext resume fehlgeschlagen.", e);
                     return null;
                 }
             }
-            // console.log("AudioContext bereit.");
+             console.log("AudioContext bereit.");
             return audioContext;
         }
 
@@ -610,7 +610,7 @@
                     } else {
                          voiceSelect.innerHTML = '<option value="">Keine dt. Stimme verfügbar</option>';
                     }
-                    updateSettingsAccess(gameActive); // Stimmauswahl-Dropdown ggf. aktivieren/deaktivieren
+                    updateSettingsAccess(gameActive);
                 };
                 // voiceschanged Event kann mehrfach gefeuert werden
                 speechSynthesis.onvoiceschanged = populateVoices;
@@ -633,9 +633,8 @@
                 selectedVoice = availableVoices.find(voice => voice.voiceURI === selectedURI);
                 if (selectedVoice) localStorage.setItem('selectedVoiceURI', selectedVoice.voiceURI);
             }
-            // Versuche, die neue Stimme einmal zu sprechen, um sicherzustellen, dass sie funktioniert
-            // Dies kann auch helfen, die TTS-Engine zu aktivieren.
-            speak(`Stimme ${selectedVoice ? selectedVoice.name : 'Standard'} ausgewählt.`).catch(e => console.warn("Test speak failed:", e));
+            if (selectedVoice) speak(`Stimme ${selectedVoice.name} ausgewählt.`);
+            else speak("Standardstimme ausgewählt.");
         }
 
         function populateBoard() {
@@ -649,18 +648,11 @@
                 tile.addEventListener('click', () => handleTileClick(item.id));
                 // Füge Kachel vor den Overlays ein, damit Overlays oben liegen
                 // Überprüfe, ob boardOverlay und endGameDisplay existieren, bevor eingefügt wird
-                let referenceNode = null;
-                if (boardOverlay && gameBoardElement.contains(boardOverlay)) referenceNode = boardOverlay;
-                if (endGameDisplay && gameBoardElement.contains(endGameDisplay)) {
-                    if (!referenceNode || endGameDisplay.compareDocumentPosition(referenceNode) & Node.DOCUMENT_POSITION_FOLLOWING) {
-                         referenceNode = endGameDisplay;
-                    }
-                }
-
-                if (referenceNode) {
+                const referenceNode = boardOverlay && endGameDisplay ? (boardOverlay.compareDocumentPosition(endGameDisplay) & Node.DOCUMENT_POSITION_FOLLOWING ? boardOverlay : endGameDisplay) : boardOverlay || endGameDisplay;
+                if (referenceNode && referenceNode.parentNode === gameBoardElement) {
                      gameBoardElement.insertBefore(tile, referenceNode);
                 } else {
-                     gameBoardElement.appendChild(tile); // Fallback, falls Overlays nicht gefunden werden (sollte nicht passieren)
+                     gameBoardElement.appendChild(tile); // Fallback, falls Overlays nicht gefunden werden
                 }
             });
         }
@@ -749,6 +741,7 @@
              firstLoad = false; // Spiel startet jetzt, nicht mehr First Load
 
             endGameMessageElement.textContent = ''; // Alte Nachricht löschen
+            // endGameActionsElement.style.display = 'none'; // Diesen Schritt brauchen wir nicht mehr, da der Container ausgeblendet wird
 
             toggleMenu(false); // Stellt sicher, dass das Menü geschlossen wird
 
@@ -764,6 +757,7 @@
                  endGameDisplay.classList.remove('visible');
             }
             endGameMessageElement.textContent = '';
+            // endGameActionsElement.style.display = 'none'; // Nicht mehr nötig
 
             await abortGame(false); // Reinigt den Zustand ohne Nachricht
             await startGame();
@@ -774,9 +768,10 @@
             gameActive = true;
 
             endGameMessageElement.textContent = '';
+            // endGameActionsElement.style.display = 'none'; // Nicht mehr nötig
+            // endGameDisplay.classList.remove('visible'); // Sicherstellen, dass es versteckt ist
 
             await ensureAudioContext(); // Sicherstellen, dass AudioContext läuft
-            await sleep(50); // **ZUSÄTZLICHE PAUSE NACH AUDIOCONTEXT RESUME/INIT**
 
             sequenceLength = parseInt(sequenceLengthSelect.value);
             totalRounds = parseInt(numRoundsSelect.value);
@@ -791,6 +786,12 @@
         }
 
         async function abortGame(showMessage = true) {
+            // Diese Funktion wird zum Bereinigen des Zustands verwendet,
+            // z.B. wenn das Spiel abgebrochen wird oder vor einem Neustart.
+            // Wenn showMessage false ist, wird keine "Spiel abgebrochen" Nachricht angezeigt.
+            // Wenn das End-Game Display sichtbar war, wird es hier nicht explizit versteckt,
+            // das passiert beim Start oder beim Öffnen des Menüs.
+
             const wasActuallyActive = gameActive;
             gameActive = false;
             gameWasPausedByMenu = false;
@@ -813,9 +814,14 @@
 
             if (showMessage && wasActuallyActive) {
                 endGameMessageElement.textContent = 'Spiel abgebrochen.';
+                 // Wir zeigen die Abbruch-Nachricht jetzt im neuen End-Game Display an
                  endGameDisplay.classList.add('visible');
+                 // Da wir keine "Nochmal spielen" Option nach Abbruch zeigen wollen,
+                 // blenden wir den Button und das Emoji im End-Game Display aus oder ändern den Inhalt.
+                 // Stattdessen können wir einfach den Text setzen und den Button verstecken.
                  endGameDisplay.querySelector('.emoji-icon').style.display = 'none';
                  playAgainButtonElement.style.display = 'none';
+                 // Das End-Game Display bleibt sichtbar, bis Spiel neu gestartet oder Menü geöffnet wird.
             } else {
                  endGameMessageElement.textContent = '';
                  endGameDisplay.classList.remove('visible'); // End-Game Display verstecken, falls es da war
@@ -848,6 +854,7 @@
             wordSpacingSelect.disabled = gameIsRunning;
 
             const ttsGenerallyAvailable = 'speechSynthesis' in window;
+            // Stimmenliste muss geladen sein, um eine nicht-Standardstimme auszuwählen
             const voicesLoaded = availableVoices.length > 0;
 
             if (!ttsGenerallyAvailable) {
@@ -861,12 +868,15 @@
                  // Wenn Spiel nicht läuft, Stimmauswahl aktivieren, wenn Stimmen verfügbar sind
                  voiceSelect.disabled = !voicesLoaded || !availableVoices.some(v => v.lang.startsWith('de'));
                   if (!voicesLoaded && !voiceSelect.querySelector('option[value=""]').textContent.includes("geladen")) {
+                     // Nur ändern, wenn noch nicht auf "Stimmen werden geladen..." gesetzt
                      const defaultOption = voiceSelect.querySelector('option[value=""]');
                      if (defaultOption) { defaultOption.textContent = "Stimmen werden geladen..."; }
                   } else if (voicesLoaded && !availableVoices.some(v => v.lang.startsWith('de'))) {
+                     // Wenn Stimmen geladen, aber keine deutschen
                      const defaultOption = voiceSelect.querySelector('option[value=""]');
                       if (defaultOption) { defaultOption.textContent = "Keine dt. Stimme verfügbar"; }
                   } else if (voicesLoaded && availableVoices.some(v => v.lang.startsWith('de')) && !voiceSelect.querySelector('option[value=""]').textContent.includes("Standard (Browser)")) {
+                      // Wenn Stimmen geladen und deutsche da, und der Text noch falsch ist
                       const defaultOption = voiceSelect.querySelector('option[value=""]');
                       if (defaultOption) { defaultOption.textContent = "Standard (Browser)"; }
                   }
@@ -906,10 +916,9 @@
             disableBoardInteraction(true); // Spielfeld während Sequenz blockieren
             repeatButton.disabled = true; // Wiederholen-Button deaktivieren
             currentSequence = generateRandomSequence(sequenceLength); // Neue Sequenz generieren
-            // console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
+            console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
 
             await sleep(500); // Kleine Pause vor Wiedergabe
-            await sleep(50); // **ZUSÄTZLICHE PAUSE VOR SEQUENZWIEDERGABE**
             await playSequence(currentSequence); // Sequenz abspielen
 
             if (gameActive && !gameWasPausedByMenu) {
@@ -924,12 +933,9 @@
         function generateRandomSequence(length) {
             const sequence = [];
             const availableIds = EMOJIS_DATA.map(item => item.id);
-            // Mische die verfügbaren IDs, um die Reihenfolge zu variieren, falls nötig
-            const shuffledIds = [...availableIds].sort(() => 0.5 - Math.random());
             for (let i = 0; i < length; i++) {
-                // Nimm IDs aus der gemischten Liste, um Wiederholungen in kurzer Sequenz zu vermeiden,
-                // falls length > availableIds.length, werden IDs wiederverwendet (Modulo)
-                sequence.push(shuffledIds[i % shuffledIds.length]);
+                const randomIndex = Math.floor(Math.random() * availableIds.length);
+                sequence.push(availableIds[randomIndex]);
             }
             return sequence;
         }
@@ -1017,7 +1023,7 @@
         async function playClickSound() {
             const ctx = await ensureAudioContext();
             if (!ctx) {
-                 // console.warn("Click sound: AudioContext not ready");
+                 console.warn("Click sound: AudioContext not ready");
                  return; // Kein Sound, wenn AudioContext nicht verfügbar
             }
 
@@ -1038,7 +1044,7 @@
         async function playErrorSound() {
             const ctx = await ensureAudioContext();
             if (!ctx) {
-                 // console.warn("Error sound: AudioContext not ready");
+                 console.warn("Error sound: AudioContext not ready");
                  return;
             }
 
@@ -1058,7 +1064,7 @@
         async function handleTileClick(itemId) {
             // Klick nur verarbeiten, wenn Spiel aktiv ist UND Spielfeld nicht blockiert ist
             // Das boardOverlay blockiert Klicks während der Sequenz.
-            // Das endGameDisplay blockiert Klicks, wenn es sichtbar ist (dank pointer-events).
+            // Das endGameDisplay blockiert Klicks, wenn es sichtbar ist.
             if (!gameActive || boardOverlay.style.display === 'block' || endGameDisplay.classList.contains('visible')) return;
 
             playClickSound(); // Klick-Sound abspielen
@@ -1145,7 +1151,7 @@
         }
 
         async function endGame() {
-            // console.log("endGame wird aufgerufen.");
+            console.log("endGame wird aufgerufen.");
             const wasActuallyActive = gameActive;
             gameActive = false; // Spielzustand auf inaktiv setzen
             gameWasPausedByMenu = false; // Menüpause zurücksetzen
@@ -1158,7 +1164,7 @@
 
 
             if (wasActuallyActive) { // Nur wenn das Spiel gerade tatsächlich geendet ist (nicht durch Abbruch)
-                // console.log("Spiel wurde regulär beendet.");
+                console.log("Spiel wurde regulär beendet.");
                 const successRate = totalRounds > 0 ? (correctRounds / totalRounds) * 100 : 0;
                 const message = `Spiel beendet! ${correctRounds} von ${totalRounds} richtig (${successRate.toFixed(0)}%).`;
 
@@ -1169,14 +1175,14 @@
 
                 // End-Game Display sichtbar machen (Zoom-Animation)
                 endGameDisplay.classList.add('visible');
-                 // console.log("End-Game Display sichtbar gemacht.");
+                 console.log("End-Game Display sichtbar gemacht.");
 
 
                 // Belohnungsmelodie immer spielen
-                await sleep(100); // Kleine Pause, bevor die Melodie spielt (könnte für AudioContext/Rendering helfen)
-                // console.log("Spiele End-Game Melodie.");
+                await sleep(100); // Kleine Pause, bevor die Melodie spielt
+                console.log("Spiele End-Game Melodie.");
                 await playFixedRewardMelody(false); // Spielende-Melodie
-                 // console.log("End-Game Melodie beendet.");
+                 console.log("End-Game Melodie beendet.");
 
 
             } else {
@@ -1184,17 +1190,17 @@
                  // wo das End-Game Display bereits von abortGame versteckt wurde.
                  // Wir stellen hier nur sicherheitshalber sicher, dass es nicht sichtbar ist.
                  endGameDisplay.classList.remove('visible');
-                 // console.log("endGame aufgerufen, aber Spiel war nicht aktiv (wahrscheinlich Abbruch/Neustartvorbereitung). Display versteckt.");
+                 console.log("endGame aufgerufen, aber Spiel war nicht aktiv (wahrscheinlich Abbruch/Neustartvorbereitung). Display versteckt.");
             }
         }
 
         async function playFixedRewardMelody(isRoundSuccessSound = false) {
             const ctx = await ensureAudioContext();
             if (!ctx) {
-                 // console.warn("playFixedRewardMelody: AudioContext nicht bereit, kann Melodie nicht spielen.");
+                 console.warn("playFixedRewardMelody: AudioContext nicht bereit, kann Melodie nicht spielen.");
                  return;
             }
-             // console.log(`playFixedRewardMelody wird gespielt (isRoundSuccessSound: ${isRoundSuccessSound}).`);
+             console.log(`playFixedRewardMelody wird gespielt (isRoundSuccessSound: ${isRoundSuccessSound}).`);
 
             let melody; let baseNoteDuration; let basePauseBetweenNotes; let gainValue;
 
@@ -1210,14 +1216,15 @@
             }
 
             if (!melody || melody.length === 0) {
-                 // console.warn("playFixedRewardMelody: Keine Melodie zum Spielen gefunden.");
+                 console.warn("playFixedRewardMelody: Keine Melodie zum Spielen gefunden.");
                  return;
             }
 
             let currentTime = ctx.currentTime + 0.05; // Startet leicht in der Zukunft
             for (const frequency of melody) {
-                 // Überprüfe, ob Spiel während Spielende-Melodie beendet wurde (z.B. Menü geöffnet)
-                if (!gameActive && !isRoundSuccessSound) break; // Abbruch nur bei Spielende-Melodie
+                // Keine explizite Abbruchbedingung hier, AudioContext Playback stoppt normalerweise
+                // nicht durch JS-Logik, nur durch Nutzeraktionen, Tab-Wechsel etc.
+                // SpeechSynthesis wird in toggleMenu oder abortGame gecancelt, falls nötig.
 
                 if (frequency === NOTE.PAUSE) { currentTime += baseNoteDuration + basePauseBetweenNotes; continue; }
 
@@ -1236,7 +1243,7 @@
             if (melodyDurationMs > 0) {
                 await sleep(melodyDurationMs + 50); // Warten, bis die Melodie wirklich fertig ist
             }
-             // console.log("playFixedRewardMelody: Melodiewiedergabe abgeschlossen.");
+             console.log("playFixedRewardMelody: Melodiewiedergabe abgeschlossen.");
         }
 
         // Hilfsfunktion für Pausen
