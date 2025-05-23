@@ -114,6 +114,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            margin-bottom: 20px; /* Abstand zum Footer */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -138,6 +139,40 @@
             cursor: not-allowed;
         }
 
+        /* NEU: Footer für Buttons im Einstellungsmenü */
+        .settings-menu-footer {
+            margin-top: auto; /* Schiebt diesen Bereich nach unten */
+            padding-top: 20px; /* Abstand nach oben */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Abstand zwischen Info- und Start-Button */
+            flex-shrink: 0; /* Verhindert Schrumpfen des Footers */
+        }
+
+        /* NEU: Style für den Info-Button */
+        .info-button {
+            background-color: #e9ecef;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.6em; /* Größe des "i" Icons */
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            padding: 0;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .info-button:hover {
+            background-color: #d0d0d0;
+            color: #333;
+        }
+
         .apply-button {
             background-color: #94bbb5;
             color: white;
@@ -148,8 +183,7 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            /* margin-top und margin-bottom entfernt, da jetzt im Footer mit gap gesteuert */
             flex-shrink: 0;
         }
         .apply-button:hover {
@@ -296,19 +330,41 @@
 
         #controlBarLogo {
             position: fixed;
-            /* Positionierung relativ zu den Kanten des Viewports,
-               unter Berücksichtigung der Safe Areas */
             right: calc(env(safe-area-inset-right, 0px) + 20px);
             bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
             width: 40px;
             height: 40px;
             object-fit: contain;
-            z-index: 999; /* Optional: Stelle sicher, dass es über dem meisten Inhalt, aber unter dem Menü/Overlay liegt */
+            z-index: 999;
         }
 
-        /* --- NEUE ELEMENTE UND REGELN FÜR END-GAME DISPLAY --- */
+        /* --- END-GAME DISPLAY --- */
         .end-game-display {
-            position: absolute;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            z-index: 10; opacity: 0; visibility: hidden;
+            transform: scale(0.8);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+            pointer-events: none;
+        }
+        .end-game-display.visible { opacity: 1; visibility: visible; transform: scale(1); pointer-events: auto; }
+        .end-game-display .emoji-icon { font-size: 4em; margin-bottom: 15px; }
+        .end-game-display .message { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center; padding: 0 10px; }
+        .end-game-display .play-again-button {
+            background-color: #007bff; color: white; padding: 10px 20px; border: none;
+            border-radius: 5px; font-size: 1em; cursor: pointer; transition: background-color 0.2s; font-weight: bold;
+        }
+        .end-game-display .play-again-button:hover { background-color: #0056b3; }
+
+        .game-board .board-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; display: none;
+        }
+
+        /* NEU: Info Modal Stile (ähnlich end-game-display, aber als fixed Overlay) */
+        .info-modal {
+            position: fixed; /* Über der gesamten Seite */
             top: 0;
             left: 0;
             width: 100%;
@@ -317,64 +373,81 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparenter Hintergrund */
-            backdrop-filter: blur(5px); /* Blur-Effekt auf den Inhalt darunter */
-            -webkit-backdrop-filter: blur(5px); /* Für Safari */
-            z-index: 10; /* Über dem Spielfeld und board-overlay */
+            background-color: rgba(0, 0, 0, 0.6); /* Dunkleres Overlay als das Menü-Overlay */
+            z-index: 1003; /* Über dem Einstellungsmenü (1001) und dessen Overlay (1000) */
             opacity: 0;
             visibility: hidden;
-            transform: scale(0.8); /* Start-Skalierung für Zoom-Effekt */
+            transform: scale(0.8);
             transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
-            pointer-events: none; /* Ermöglicht Klicks auf das Board, wenn nicht sichtbar */
+            pointer-events: none;
+            padding: 20px; /* Damit das innere Modal nicht am Rand klebt */
+            box-sizing: border-box;
         }
 
-        .end-game-display.visible {
+        .info-modal.visible {
             opacity: 1;
             visibility: visible;
             transform: scale(1);
-            pointer-events: auto; /* Fängt Klicks ab, wenn sichtbar */
+            pointer-events: auto;
         }
 
-        .end-game-display .emoji-icon {
-            font-size: 4em; /* Größeres Emoji */
+        .info-modal-content {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+            text-align: left;
+            width: 100%;
+            max-width: 550px; /* Etwas breiter für mehr Text */
+            max-height: 85vh; /* Verhindert Überlaufen auf kleinen Bildschirmen */
+            overflow-y: auto; /* Scrollbar bei viel Inhalt */
+            overscroll-behavior-y: contain; /* Verhindert Scrollen des Body dahinter */
+        }
+
+        .info-modal-content h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .info-modal-content p,
+        .info-modal-content ul {
+            font-size: 0.95em;
+            line-height: 1.65;
+            color: #444;
             margin-bottom: 15px;
         }
-
-        .end-game-display .message {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px; /* Abstand zum Button */
-            text-align: center;
-            padding: 0 10px; /* Kleiner horizontaler Padding */
+        .info-modal-content ul {
+            padding-left: 25px; /* Mehr Einzug für die Liste */
+        }
+        .info-modal-content li {
+            margin-bottom: 10px;
+        }
+        .info-modal-content strong {
+            color: #222;
         }
 
-        .end-game-display .play-again-button { /* Angepasster Selektor */
-            background-color: #007bff;
+        .close-info-button {
+            background-color: #6c757d; /* Sekundärfarbe */
             color: white;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             font-size: 1em;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s;
-            font-weight: bold;
+            display: block; /* Für margin: auto */
+            margin: 25px auto 0 auto; /* Zentriert und Abstand nach oben */
+            min-width: 120px; /* Mindestbreite */
         }
-        .end-game-display .play-again-button:hover {
-            background-color: #0056b3;
+        .close-info-button:hover {
+            background-color: #5a6268;
         }
-        /* --- ENDE NEUE ELEMENTE --- */
+        /* ENDE NEU: Info Modal Stile */
 
-
-        /* Das Board-Overlay blockiert Interaktion während der Sequenz */
-        /* Es hat keinen Hintergrund mehr, außer im initialen Menü-Fokus-Modus */
-        .game-board .board-overlay { /* Klassennamen geändert */
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            /* background-color: removed; */ /* Hintergrund nur bei initial-focus-menu */
-            z-index: 5; /* Unter dem End-Game Display */
-            display: none; /* Standardmäßig versteckt */
-        }
 
         @media (max-width: 320px) {
             .tile { font-size: 2em; }
@@ -396,6 +469,16 @@
              }
              .end-game-display .message {
                 font-size: 1em;
+             }
+             /* NEU: Anpassungen für Info Modal auf kleinen Screens */
+             .info-modal-content {
+                padding: 20px;
+             }
+             .info-modal-content h2 {
+                font-size: 1.2em;
+             }
+             .info-modal-content p, .info-modal-content ul {
+                font-size: 0.9em;
              }
         }
     </style>
@@ -443,7 +526,13 @@
                     <select id="voiceSelect"><option value="">Standard</option></select>
                 </div>
             </div>
-            <button id="applySettingsAndStartButton" class="apply-button">Start</button>
+            <!-- NEU: Footer für Buttons im Einstellungsmenü -->
+            <div class="settings-menu-footer">
+                <button id="infoButton" class="info-button" aria-label="Informationen für Eltern">
+                    ℹ <!-- Unicode für "i" in Kreis -->
+                </button>
+                <button id="applySettingsAndStartButton" class="apply-button">Start</button>
+            </div>
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -452,17 +541,12 @@
         <h1>Plapperschlange</h1>
         <h2>Wörter mit K am Anfang</h2>
         <div class="game-board" id="gameBoard">
-            <!-- Das Overlay, das Klicks während der Sequenz blockiert -->
             <div class="board-overlay" id="boardOverlay"></div>
-
-            <!-- NEUER CONTAINER FÜR DAS END-GAME DISPLAY -->
             <div class="end-game-display" id="endGameDisplay">
-                <div class="emoji-icon">👍</div> <!-- Daumen hoch Emoji -->
-                <div class="message" id="endGameMessage"></div> <!-- Für die Ergebnisnachricht -->
+                <div class="emoji-icon">👍</div>
+                <div class="message" id="endGameMessage"></div>
                 <button id="playAgainButton" class="play-again-button">Nochmal spielen?</button>
             </div>
-            <!-- ENDE NEUER CONTAINER -->
-
             <!-- Kacheln werden hier von populateBoard() eingefügt -->
         </div>
 
@@ -474,6 +558,40 @@
             <img src="images/logo.png" alt="Firmenlogo" id="controlBarLogo">
         </div>
     </div>
+
+    <!-- NEU: Info Modal HTML Struktur -->
+    <div id="infoModal" class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle" aria-hidden="true">
+        <div class="info-modal-content">
+            <h2 id="infoModalTitle">Informationen für Eltern</h2>
+            <p>
+                Liebe Eltern, mit der "Plapperschlange" können Sie spielerisch das <strong>auditive Gedächtnis</strong>
+                und die <strong>Konzentrationsfähigkeit</strong> Ihres Kindes fördern. Dieses Spiel hilft dabei, gehörte Wortsequenzen
+                kurzzeitig zu speichern und korrekt wiederzugeben.
+            </p>
+            <p>So nutzen Sie die Einstellungen optimal:</p>
+            <ul>
+                <li><strong>Anzahl der Wörter:</strong> Beginnen Sie mit einer geringen Anzahl (z.B. 2 oder 3 Wörter),
+                    besonders bei jüngeren Kindern oder wenn Ihr Kind das Spiel zum ersten Mal spielt.
+                    Steigern Sie die Anzahl langsam, sobald Ihr Kind sicherer wird. Dies trainiert die Merkspanne.</li>
+                <li><strong>Durchgänge:</strong> Eine moderate Anzahl an Durchgängen (z.B. 5 bis 10) ist meist ideal,
+                    um die Aufmerksamkeit aufrechtzuerhalten, ohne zu überfordern. Kurze, regelmäßige Spieleinheiten
+                    sind oft effektiver als lange.</li>
+                <li><strong>Abstand zwischen Wörtern:</strong> Ein längerer Abstand (z.B. 500 bis 800 Millisekunden)
+                    gibt Ihrem Kind mehr Zeit, jedes Wort zu verarbeiten, bevor das nächste kommt. Experimentieren Sie,
+                    welcher Abstand für Ihr Kind am besten passt. Ein kürzerer Abstand erhöht den Schwierigkeitsgrad.</li>
+                <li><strong>Stimme:</strong> Lassen Sie Ihr Kind eine Stimme auswählen, die es als angenehm empfindet.
+                    Eine vertraute oder klare Stimme kann das Zuhören erleichtern.</li>
+            </ul>
+            <p>
+                Beobachten Sie Ihr Kind beim Spielen: Hat es Spaß? Ist es frustriert oder unterfordert?
+                Passen Sie die Einstellungen entsprechend an. Das wichtigste Ziel ist, Freude am Lernen zu vermitteln
+                und das Selbstvertrauen Ihres Kindes zu stärken!
+            </p>
+            <button id="closeInfoModalButton" class="close-info-button">Verstanden</button>
+        </div>
+    </div>
+    <!-- ENDE NEU: Info Modal HTML Struktur -->
+
 
     <script>
         const EMOJIS_DATA = [
@@ -511,13 +629,19 @@
         const endGameMessageElement = endGameDisplay.querySelector('.message');
         const playAgainButtonElement = endGameDisplay.querySelector('.play-again-button');
 
-
         const sequenceLengthSelect = document.getElementById('sequenceLength');
         const numRoundsSelect = document.getElementById('numRounds');
         const wordSpacingSelect = document.getElementById('wordSpacing');
         const voiceSelect = document.getElementById('voiceSelect');
         const repeatButton = document.getElementById('repeatButton');
         const progressCirclesContainer = document.getElementById('progressCircles');
+
+        /* NEU: DOM Elemente für das Info-Modal */
+        const infoButton = document.getElementById('infoButton');
+        const infoModal = document.getElementById('infoModal');
+        const closeInfoModalButton = document.getElementById('closeInfoModalButton');
+        /* ENDE NEU */
+
 
         // Spielzustandsvariablen
         let currentSequence = [];
@@ -535,11 +659,10 @@
         const MAX_ATTEMPTS_PER_ROUND = 2;
         let gameWasPausedByMenu = false;
         let firstLoad = true;
-        let audioSystemsPrimed = false; // NEU: Für iOS Workaround
 
         async function ensureAudioContext() {
             if (!audioContext || audioContext.state === 'closed') {
-                // console.log("AudioContext wird neu erstellt.");
+                console.log("AudioContext wird neu erstellt.");
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 } catch (e) {
@@ -547,57 +670,20 @@
                     return null;
                 }
             }
-            // console.log("AudioContext Status vor resume:", audioContext.state);
+             console.log("AudioContext Status:", audioContext.state);
             if (audioContext.state === 'suspended') {
-                // console.log("AudioContext ist suspended, versuche resume().");
+                console.log("AudioContext ist suspended, versuche resume().");
                 try {
                     await audioContext.resume();
-                    // console.log("AudioContext resumed erfolgreich. Neuer Status:", audioContext.state);
+                     console.log("AudioContext resumed erfolgreich.");
                 } catch (e) {
                     console.warn("AudioContext resume fehlgeschlagen.", e);
                     return null;
                 }
             }
-            // console.log("AudioContext bereit:", audioContext.state);
+             console.log("AudioContext bereit.");
             return audioContext;
         }
-
-        // NEUE Funktion zum "Aufwecken" der Audio Systeme für iOS
-        async function primeAudioSystems() {
-            if (audioSystemsPrimed) return;
-            console.log("Priming Audio Systems (iOS Workaround)...");
-
-            // 1. AudioContext aufwecken
-            const ctx = await ensureAudioContext();
-            if (ctx && ctx.state === 'running') {
-                const oscillator = ctx.createOscillator();
-                const gainNode = ctx.createGain();
-                gainNode.gain.setValueAtTime(0, ctx.currentTime); // Lautstärke 0
-                oscillator.connect(gainNode);
-                gainNode.connect(ctx.destination);
-                oscillator.start(ctx.currentTime);
-                oscillator.stop(ctx.currentTime + 0.01);
-                console.log("AudioContext primed with dummy sound.");
-            } else {
-                console.warn("AudioContext nicht bereit zum Primen oder nicht 'running'. Status:", ctx ? ctx.state : "nicht vorhanden");
-            }
-
-            // 2. Speech Synthesis aufwecken
-            if ('speechSynthesis' in window) {
-                if (speechSynthesis.speaking) {
-                    speechSynthesis.cancel();
-                    await sleep(50);
-                }
-                const utterance = new SpeechSynthesisUtterance(' '); // Ein Leerzeichen
-                utterance.volume = 0; // Stumm
-                // utterance.onend = () => console.log("TTS primed with dummy utterance."); // Optionales Logging
-                // utterance.onerror = (e) => console.warn("TTS priming error:", e.error); // Optionales Logging
-                speechSynthesis.speak(utterance);
-                console.log("SpeechSynthesis primed by calling speak().");
-            }
-            audioSystemsPrimed = true;
-        }
-
 
         document.addEventListener('DOMContentLoaded', () => {
             populateBoard();
@@ -611,6 +697,27 @@
 
             repeatButton.addEventListener('click', repeatCurrentSequence);
             voiceSelect.addEventListener('change', handleVoiceChange);
+
+            /* NEU: Event Listener für Info-Modal */
+            infoButton.addEventListener('click', () => {
+                infoModal.classList.add('visible');
+                infoModal.setAttribute('aria-hidden', 'false');
+                // Optional: Fokus auf den Schließen-Button oder das Modal selbst
+                // closeInfoModalButton.focus();
+            });
+            closeInfoModalButton.addEventListener('click', () => {
+                infoModal.classList.remove('visible');
+                infoModal.setAttribute('aria-hidden', 'true');
+            });
+            // Schließen des Modals bei Klick auf den Hintergrund
+            infoModal.addEventListener('click', (event) => {
+                if (event.target === infoModal) { // Nur wenn direkt auf das .info-modal geklickt wird
+                    infoModal.classList.remove('visible');
+                    infoModal.setAttribute('aria-hidden', 'true');
+                }
+            });
+            /* ENDE NEU */
+
 
             settingsMenu.setAttribute('aria-hidden', 'true');
             menuToggleButton.setAttribute('aria-expanded', 'false');
@@ -667,16 +774,8 @@
                 selectedVoice = availableVoices.find(voice => voice.voiceURI === selectedURI);
                 if (selectedVoice) localStorage.setItem('selectedVoiceURI', selectedVoice.voiceURI);
             }
-            // Kurze Testausgabe nach Stimmenwechsel, um TTS zu "aktivieren", falls noch nicht geschehen
-            if (!audioSystemsPrimed && ('speechSynthesis' in window)) { // Nur wenn noch nicht geprimed
-                 primeAudioSystems().then(() => { // Erst primen, dann sprechen
-                    if (selectedVoice) speak(`Stimme ${selectedVoice.name} ausgewählt.`);
-                    else speak("Standardstimme ausgewählt.");
-                 });
-            } else {
-                 if (selectedVoice) speak(`Stimme ${selectedVoice.name} ausgewählt.`);
-                 else speak("Standardstimme ausgewählt.");
-            }
+            if (selectedVoice) speak(`Stimme ${selectedVoice.name} ausgewählt.`);
+            else speak("Standardstimme ausgewählt.");
         }
 
         function populateBoard() {
@@ -687,7 +786,7 @@
                 tile.dataset.id = item.id;
                 tile.textContent = item.emoji;
                 tile.addEventListener('click', () => handleTileClick(item.id));
-                const referenceNode = boardOverlay || endGameDisplay; // Vereinfacht, da endGameDisplay nach boardOverlay kommt
+                const referenceNode = boardOverlay && endGameDisplay ? (boardOverlay.compareDocumentPosition(endGameDisplay) & Node.DOCUMENT_POSITION_FOLLOWING ? boardOverlay : endGameDisplay) : boardOverlay || endGameDisplay;
                 if (referenceNode && referenceNode.parentNode === gameBoardElement) {
                      gameBoardElement.insertBefore(tile, referenceNode);
                 } else {
@@ -699,6 +798,12 @@
         function toggleMenu(forceOpen = null) {
             const isOpen = settingsMenu.classList.contains('active');
             const show = forceOpen !== null ? forceOpen : !isOpen;
+
+            // NEU: Wenn das Info-Modal offen ist und das Menü geöffnet/geschlossen wird, schließe das Info-Modal
+            if (infoModal.classList.contains('visible')) {
+                infoModal.classList.remove('visible');
+                infoModal.setAttribute('aria-hidden', 'true');
+            }
 
             if (show) {
                 settingsMenu.classList.add('active');
@@ -753,13 +858,8 @@
             if (gameBoardElement.classList.contains('initial-focus-menu')) {
                  gameBoardElement.classList.remove('initial-focus-menu');
             }
+             firstLoad = false;
 
-            // WICHTIG: Audio Systeme "aufwecken" beim ersten relevanten Klick
-            if (!audioSystemsPrimed) {
-                await primeAudioSystems();
-            }
-
-            firstLoad = false;
             endGameMessageElement.textContent = '';
             toggleMenu(false);
 
@@ -774,12 +874,6 @@
                  endGameDisplay.classList.remove('visible');
             }
             endGameMessageElement.textContent = '';
-
-            // WICHTIG: Audio Systeme "aufwecken", falls noch nicht geschehen
-            if (!audioSystemsPrimed) {
-                await primeAudioSystems();
-            }
-
             await abortGame(false);
             await startGame();
         }
@@ -788,15 +882,12 @@
             if (gameActive) return;
             gameActive = true;
             endGameMessageElement.textContent = '';
-
-            await ensureAudioContext(); // Stelle sicher, dass AudioContext läuft
-
+            await ensureAudioContext();
             sequenceLength = parseInt(sequenceLengthSelect.value);
             totalRounds = parseInt(numRoundsSelect.value);
             wordSpacing = parseInt(wordSpacingSelect.value);
             currentRound = 0; correctRounds = 0; playerSequence = []; roundAttempts = 0;
             gameWasPausedByMenu = false;
-
             updateButtonStates(true);
             updateSettingsAccess(true);
             initializeProgressCircles(totalRounds);
@@ -808,24 +899,21 @@
             gameActive = false;
             gameWasPausedByMenu = false;
             currentSequence = []; playerSequence = [];
-
             if (!settingsMenu.classList.contains('active')) {
                 disableBoardInteraction(false);
             }
-
             updateButtonStates(false);
             updateSettingsAccess(false);
             clearProgressCircles();
-
             document.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
                 t.classList.remove('active'); t.classList.remove('error-input');
             });
 
             if (showMessage && wasActuallyActive) {
                 endGameMessageElement.textContent = 'Spiel abgebrochen.';
-                 endGameDisplay.classList.add('visible');
-                 endGameDisplay.querySelector('.emoji-icon').style.display = 'none';
-                 playAgainButtonElement.style.display = 'none';
+                endGameDisplay.classList.add('visible');
+                endGameDisplay.querySelector('.emoji-icon').style.display = 'none';
+                playAgainButtonElement.style.display = 'none';
             } else {
                  endGameMessageElement.textContent = '';
                  endGameDisplay.classList.remove('visible');
@@ -839,7 +927,6 @@
             }
         }
 
-
         function updateButtonStates(isPlaying) {
             const isBoardBlocked = boardOverlay.style.display === 'block' && !gameWasPausedByMenu;
             repeatButton.disabled = !isPlaying || currentSequence.length === 0 || isBoardBlocked;
@@ -849,10 +936,8 @@
             sequenceLengthSelect.disabled = gameIsRunning;
             numRoundsSelect.disabled = gameIsRunning;
             wordSpacingSelect.disabled = gameIsRunning;
-
             const ttsGenerallyAvailable = 'speechSynthesis' in window;
             const voicesLoaded = availableVoices.length > 0;
-
             if (!ttsGenerallyAvailable) {
                 voiceSelect.disabled = true;
                 const defaultOption = voiceSelect.querySelector('option[value=""]');
@@ -861,15 +946,15 @@
                 voiceSelect.disabled = true;
             } else {
                  voiceSelect.disabled = !voicesLoaded || !availableVoices.some(v => v.lang.startsWith('de'));
-                  const defaultOption = voiceSelect.querySelector('option[value=""]');
-                  if (defaultOption) {
-                      if (!voicesLoaded && !defaultOption.textContent.includes("geladen")) {
-                         defaultOption.textContent = "Stimmen werden geladen...";
-                      } else if (voicesLoaded && !availableVoices.some(v => v.lang.startsWith('de'))) {
-                         defaultOption.textContent = "Keine dt. Stimme verfügbar";
-                      } else if (voicesLoaded && availableVoices.some(v => v.lang.startsWith('de')) && defaultOption.textContent !== "Standard (Browser)") {
-                         defaultOption.textContent = "Standard (Browser)";
-                      }
+                  if (!voicesLoaded && !voiceSelect.querySelector('option[value=""]').textContent.includes("geladen")) {
+                     const defaultOption = voiceSelect.querySelector('option[value=""]');
+                     if (defaultOption) { defaultOption.textContent = "Stimmen werden geladen..."; }
+                  } else if (voicesLoaded && !availableVoices.some(v => v.lang.startsWith('de'))) {
+                     const defaultOption = voiceSelect.querySelector('option[value=""]');
+                      if (defaultOption) { defaultOption.textContent = "Keine dt. Stimme verfügbar"; }
+                  } else if (voicesLoaded && availableVoices.some(v => v.lang.startsWith('de')) && !voiceSelect.querySelector('option[value=""]').textContent.includes("Standard (Browser)")) {
+                      const defaultOption = voiceSelect.querySelector('option[value=""]');
+                      if (defaultOption) { defaultOption.textContent = "Standard (Browser)"; }
                   }
             }
         }
@@ -892,23 +977,19 @@
         }
         function disableBoardInteraction(disable) { boardOverlay.style.display = disable ? 'block' : 'none'; }
 
-
         async function nextRound() {
             if (!gameActive) return;
-
             if (currentRound >= totalRounds) {
                 await endGame();
                 return;
             }
-
             playerSequence = []; roundAttempts = 0;
-            disableBoardInteraction(true); repeatButton.disabled = true;
+            disableBoardInteraction(true);
+            repeatButton.disabled = true;
             currentSequence = generateRandomSequence(sequenceLength);
-            // console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
-
+            console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
             await sleep(500);
             await playSequence(currentSequence);
-
             if (gameActive && !gameWasPausedByMenu) {
                 disableBoardInteraction(false);
             }
@@ -927,29 +1008,17 @@
 
         async function playSequence(sequence, isRepeat = false) {
             if (!gameActive && !isRepeat) return;
-
             disableBoardInteraction(true);
             repeatButton.disabled = true;
-
-            gameBoardElement.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
+             gameBoardElement.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
                 t.classList.remove('active'); t.classList.remove('error-input');
-            });
-
-            if ('speechSynthesis' in window && speechSynthesis.speaking) {
-                // console.log("playSequence: TTS spricht noch, cancelling...");
-                speechSynthesis.cancel();
-                await sleep(60); // Gib TTS Zeit zum Stoppen (wichtig für iOS)
-            }
-
+             });
             for (const itemId of sequence) {
                 if (!gameActive && !isRepeat) break;
-
                 const itemData = EMOJIS_DATA.find(d => d.id === itemId);
                 const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
                 if (itemData && tileElement) {
                     tileElement.classList.add('active');
-                    await sleep(50); // Kurze Pause für UI-Update vor TTS auf iOS
-                    
                     await speak(itemData.word);
                     await sleep(100);
                     tileElement.classList.remove('active');
@@ -960,15 +1029,13 @@
                     break;
                 }
             }
-
-            if (gameActive && !gameWasPausedByMenu) {
-                disableBoardInteraction(false);
-            } else if (!gameActive && isRepeat) {
+             if (gameActive && !gameWasPausedByMenu) {
                  disableBoardInteraction(false);
-            }
-            updateButtonStates(gameActive);
+             } else if (!gameActive && isRepeat) {
+                  disableBoardInteraction(false);
+             }
+             updateButtonStates(gameActive);
         }
-
 
         async function repeatCurrentSequence() {
             const isBoardBlocked = boardOverlay.style.display === 'block' && !gameWasPausedByMenu;
@@ -978,16 +1045,7 @@
 
         function speak(text) {
             return new Promise(async (resolve) => {
-                if (!('speechSynthesis' in window) || !text) {
-                    // console.warn("Speak: TTS nicht verfügbar oder kein Text.");
-                    resolve(); return;
-                }
-
-                const ctx = await ensureAudioContext();
-                if (!ctx || ctx.state !== 'running') {
-                    // console.warn(`Speak: AudioContext nicht im 'running' Zustand (aktuell: ${ctx ? ctx.state : 'nicht vorhanden'}). TTS könnte fehlschlagen auf iOS.`);
-                }
-
+                if (!('speechSynthesis' in window) || !text) { resolve(); return; }
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'de-DE';
                 if (selectedVoice) {
@@ -997,24 +1055,10 @@
                     const defaultGermanVoice = voices.find(v => v.lang.startsWith('de') && v.default) ||
                                              voices.find(v => v.lang.startsWith('de'));
                     if (defaultGermanVoice) utterance.voice = defaultGermanVoice;
-                    // else console.warn("Speak: Keine deutsche Stimme gefunden/zugewiesen.");
                 }
-
-                // console.log(`Versuche zu sprechen: "${text}" mit Stimme: ${utterance.voice ? utterance.voice.name : 'Standard/Keine'}`);
-                // utterance.onstart = () => console.log(`TTS hat gestartet für: "${text}"`);
-                utterance.onend = () => {
-                    // console.log(`TTS beendet für: "${text}"`);
-                    resolve();
-                };
+                utterance.onend = () => resolve();
                 utterance.onerror = (event) => {
-                    console.error(`TTS Error für "${text}":`, event.error, event);
-                    if (event.error === 'canceled' && speechSynthesis.speaking) {
-                        // Workaround für iOS, wo 'canceled' manchmal vorzeitig gefeuert wird
-                        setTimeout(() => {
-                            if (!speechSynthesis.speaking) resolve();
-                        }, 50);
-                        return;
-                    }
+                    console.error('TTS Error:', event.error);
                     resolve();
                 };
                 speechSynthesis.speak(utterance);
@@ -1023,8 +1067,7 @@
 
         async function playClickSound() {
             const ctx = await ensureAudioContext();
-            if (!ctx || ctx.state !== 'running') { /* console.warn("Click sound: AudioContext not ready"); */ return; }
-
+            if (!ctx) { return; }
             const clickTime = ctx.currentTime;
             const oscillator = ctx.createOscillator();
             oscillator.type = 'triangle';
@@ -1041,8 +1084,7 @@
 
         async function playErrorSound() {
             const ctx = await ensureAudioContext();
-            if (!ctx || ctx.state !== 'running') { /* console.warn("Error sound: AudioContext not ready"); */ return; }
-
+            if (!ctx) { return; }
             const oscillator = ctx.createOscillator();
             const gainNode = ctx.createGain();
             oscillator.connect(gainNode); gainNode.connect(ctx.destination);
@@ -1058,9 +1100,7 @@
 
         async function handleTileClick(itemId) {
             if (!gameActive || boardOverlay.style.display === 'block' || endGameDisplay.classList.contains('visible')) return;
-
             playClickSound();
-
             const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
             const currentClickIndex = playerSequence.length;
             if (currentClickIndex < currentSequence.length && itemId === currentSequence[currentClickIndex]) {
@@ -1069,7 +1109,9 @@
                     tileElement.classList.add('active');
                     setTimeout(() => tileElement.classList.remove('active'), 300);
                 }
-                if (playerSequence.length === currentSequence.length) await evaluatePlayerInput(true);
+                if (playerSequence.length === currentSequence.length) {
+                    await evaluatePlayerInput(true);
+                }
             } else {
                 if (tileElement) {
                     tileElement.classList.add('error-input');
@@ -1081,74 +1123,74 @@
 
         async function evaluatePlayerInput(isCorrectInput) {
             if (!gameActive) return;
-            disableBoardInteraction(true); repeatButton.disabled = true;
-
+            disableBoardInteraction(true);
+            repeatButton.disabled = true;
             if (isCorrectInput) {
-                updateProgressCircle(currentRound, true); correctRounds++;
+                updateProgressCircle(currentRound, true);
+                correctRounds++;
                 await sleep(150);
                 await playFixedRewardMelody(true);
-                currentRound++; playerSequence = []; roundAttempts = 0;
+                currentRound++;
+                playerSequence = [];
+                roundAttempts = 0;
                 await sleep(500);
                 await nextRound();
             } else {
                 roundAttempts++;
                 updateProgressCircle(currentRound, false);
                 await playErrorSound();
-
                 if (roundAttempts >= MAX_ATTEMPTS_PER_ROUND) {
-                    endGameMessageElement.textContent = `Sequenz nicht geschafft. Nächste Runde...`;
+                    endGameMessageElement.textContent = `Sequenz nicht geschafft. Nächste Runde...`; // Dieser Text wird nun vom end-game-display verdeckt, wenn es erscheint
                     await sleep(1500);
-                    currentRound++; playerSequence = []; roundAttempts = 0;
-                    endGameMessageElement.textContent = '';
+                    currentRound++;
+                    playerSequence = [];
+                    roundAttempts = 0;
+                    endGameMessageElement.textContent = ''; // Nachricht leeren
                     await nextRound();
                 } else {
-                    endGameMessageElement.textContent = 'Nicht ganz! Hör genau zu.';
+                    // endGameMessageElement.textContent = 'Nicht ganz! Hör genau zu.'; // Wird auch verdeckt sein
                     playerSequence = [];
                     await sleep(1000);
-                    endGameMessageElement.textContent = '';
+                    // endGameMessageElement.textContent = '';
                     await playSequence(currentSequence, true);
                 }
             }
         }
 
         async function endGame() {
-            // console.log("endGame wird aufgerufen.");
+            console.log("endGame wird aufgerufen.");
             const wasActuallyActive = gameActive;
-            gameActive = false; gameWasPausedByMenu = false;
-
+            gameActive = false;
+            gameWasPausedByMenu = false;
             disableBoardInteraction(false);
             updateButtonStates(false);
             updateSettingsAccess(false);
             clearProgressCircles();
 
             if (wasActuallyActive) {
-                // console.log("Spiel wurde regulär beendet.");
+                console.log("Spiel wurde regulär beendet.");
                 const successRate = totalRounds > 0 ? (correctRounds / totalRounds) * 100 : 0;
                 const message = `Spiel beendet! ${correctRounds} von ${totalRounds} richtig (${successRate.toFixed(0)}%).`;
-
                 endGameDisplay.querySelector('.emoji-icon').style.display = '';
                 endGameMessageElement.textContent = message;
                 playAgainButtonElement.style.display = '';
                 endGameDisplay.classList.add('visible');
-                // console.log("End-Game Display sichtbar gemacht.");
-
-                await sleep(100); // Wichtig für iOS Melodie
-                // console.log("Spiele End-Game Melodie.");
+                 console.log("End-Game Display sichtbar gemacht.");
+                await sleep(100);
+                console.log("Spiele End-Game Melodie.");
                 await playFixedRewardMelody(false);
-                // console.log("End-Game Melodie beendet.");
+                 console.log("End-Game Melodie beendet.");
             } else {
                  endGameDisplay.classList.remove('visible');
-                //  console.log("endGame aufgerufen, aber Spiel war nicht aktiv. Display versteckt.");
+                 console.log("endGame aufgerufen, aber Spiel war nicht aktiv. Display versteckt.");
             }
         }
 
         async function playFixedRewardMelody(isRoundSuccessSound = false) {
             const ctx = await ensureAudioContext();
-            if (!ctx || ctx.state !== 'running') { /* console.warn(`playFixedRewardMelody: AudioContext not ready (Status: ${ctx ? ctx.state : 'null'}), kann Melodie nicht spielen.`); */ return; }
-            // console.log(`playFixedRewardMelody wird gespielt (isRoundSuccessSound: ${isRoundSuccessSound}).`);
-
+            if (!ctx) { return; }
+             console.log(`playFixedRewardMelody wird gespielt (isRoundSuccessSound: ${isRoundSuccessSound}).`);
             let melody; let baseNoteDuration; let basePauseBetweenNotes; let gainValue;
-
             if (isRoundSuccessSound) {
                 melody = [NOTE.C5, NOTE.E5, NOTE.G5];
                 baseNoteDuration = 0.12; basePauseBetweenNotes = 0.04; gainValue = 0.15;
@@ -1157,13 +1199,10 @@
                 melody = REWARD_MELODIES[randomMelodyIndex];
                 baseNoteDuration = 0.25; basePauseBetweenNotes = 0.08; gainValue = 0.25;
             }
-
-            if (!melody || melody.length === 0) { /* console.warn("playFixedRewardMelody: Keine Melodie zum Spielen gefunden."); */ return; }
-
+            if (!melody || melody.length === 0) { return; }
             let currentTime = ctx.currentTime + 0.05;
             for (const frequency of melody) {
                 if (frequency === NOTE.PAUSE) { currentTime += baseNoteDuration + basePauseBetweenNotes; continue; }
-
                 const oscillator = ctx.createOscillator();
                 const gainNode = ctx.createGain();
                 oscillator.connect(gainNode); gainNode.connect(ctx.destination);
@@ -1179,10 +1218,12 @@
             if (melodyDurationMs > 0) {
                 await sleep(melodyDurationMs + 50);
             }
-            // console.log("playFixedRewardMelody: Melodiewiedergabe abgeschlossen.");
+             console.log("playFixedRewardMelody: Melodiewiedergabe abgeschlossen.");
         }
 
-        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
     </script>
 </body>
 </html>
