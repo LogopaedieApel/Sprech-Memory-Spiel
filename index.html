@@ -114,7 +114,6 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 30px; /* ANGEPASST: Abstand zum Footer darunter */
         }
         .settings-menu-content .settings > div {
             display: flex;
@@ -139,38 +138,6 @@
             cursor: not-allowed;
         }
 
-        .settings-menu-footer {
-            /* margin-top: auto; ENTFERNT - Buttons sind direkt unter den Settings */
-            /* padding-top: 20px; /* Kann bleiben oder entfernt werden, je nach gewünschtem Abstand */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px; /* Abstand zwischen Start- und Info-Button */
-            flex-shrink: 0;
-        }
-
-        .info-button {
-            background-color: #e9ecef;
-            color: #555;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.6em;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            padding: 0;
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .info-button:hover {
-            background-color: #d0d0d0;
-            color: #333;
-        }
-
         .apply-button {
             background-color: #94bbb5;
             color: white;
@@ -181,6 +148,8 @@
             width: 100%;
             font-size: 1.1em;
             font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
             flex-shrink: 0;
         }
         .apply-button:hover {
@@ -218,21 +187,21 @@
             position: relative;
             margin-left: auto;
             margin-right: auto;
-            margin-top: 60px;
+            margin-top: 60px; /* Abstand damit der Container unter dem Menü-Toggle-Button beginnt */
             margin-bottom: 20px;
         }
 
         h1 {
-            color: #94bbb5;
+            color: #94bbb5; /* Deine angepasste Farbe für h1 */
             margin-top: 0;
             margin-bottom: 20px;
         }
 
-        .container h2 {
-            font-size: 1.0em;
-            color: #999999;
-            margin-top: 0;
-            margin-bottom: 20px;
+        .container h2 { /* NEUE REGEL oder ANPASSUNG */
+            font-size: 1.0em; /* Beispiel: etwas kleiner machen */
+            color: #999999;    /* Aktuelle Standardfarbe */
+            margin-top: 0;   /* Optional: oberen Abstand reduzieren, wenn gewünscht */
+            margin-bottom: 20px; /* Standardabstand unten */
         }
 
         .game-board {
@@ -244,12 +213,12 @@
             max-width: 300px;
             aspect-ratio: 1 / 1;
             margin: 20px auto;
-            position: relative;
+            position: relative; /* Wichtig für die Positionierung des Overlays */
         }
         .game-board.initial-focus-menu > .tile {
             filter: blur(3px);
         }
-        .game-board.initial-focus-menu .board-overlay {
+        .game-board.initial-focus-menu .board-overlay { /* Nur das Board-Overlay wird grau/geblurrt */
             background-color: rgba(200, 200, 200, 0.5);
         }
 
@@ -327,80 +296,107 @@
 
         #controlBarLogo {
             position: fixed;
+            /* Positionierung relativ zu den Kanten des Viewports,
+               unter Berücksichtigung der Safe Areas */
             right: calc(env(safe-area-inset-right, 0px) + 20px);
             bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
             width: 40px;
             height: 40px;
             object-fit: contain;
-            z-index: 999;
+            z-index: 999; /* Optional: Stelle sicher, dass es über dem meisten Inhalt, aber unter dem Menü/Overlay liegt */
         }
 
+        /* --- NEUE ELEMENTE UND REGELN FÜR END-GAME DISPLAY --- */
         .end-game-display {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            z-index: 10; opacity: 0; visibility: hidden;
-            transform: scale(0.8);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparenter Hintergrund */
+            backdrop-filter: blur(5px); /* Blur-Effekt auf den Inhalt darunter */
+            -webkit-backdrop-filter: blur(5px); /* Für Safari */
+            z-index: 10; /* Über dem Spielfeld und board-overlay */
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8); /* Start-Skalierung für Zoom-Effekt */
             transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
-            pointer-events: none;
-        }
-        .end-game-display.visible { opacity: 1; visibility: visible; transform: scale(1); pointer-events: auto; }
-        .end-game-display .emoji-icon { font-size: 4em; margin-bottom: 15px; }
-        .end-game-display .message { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center; padding: 0 10px; }
-        .end-game-display .play-again-button {
-            background-color: #007bff; color: white; padding: 10px 20px; border: none;
-            border-radius: 5px; font-size: 1em; cursor: pointer; transition: background-color 0.2s; font-weight: bold;
-        }
-        .end-game-display .play-again-button:hover { background-color: #0056b3; }
-
-        .game-board .board-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5; display: none;
+            pointer-events: none; /* Ermöglicht Klicks auf das Board, wenn nicht sichtbar */
         }
 
-        .info-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 1003;
-            opacity: 0; visibility: hidden; transform: scale(0.8);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
-            pointer-events: none;
-            padding: 20px;
-            box-sizing: border-box;
+        .end-game-display.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto; /* Fängt Klicks ab, wenn sichtbar */
         }
-        .info-modal.visible { opacity: 1; visibility: visible; transform: scale(1); pointer-events: auto; }
-        .info-modal-content {
-            background-color: #ffffff; padding: 25px 30px; border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-            text-align: left; width: 100%; max-width: 550px; max-height: 85vh;
-            overflow-y: auto; overscroll-behavior-y: contain;
-        }
-        .info-modal-content h2 { margin-top: 0; color: #333; text-align: center; font-size: 1.4em; margin-bottom: 20px; }
-        .info-modal-content p, .info-modal-content ul { font-size: 0.95em; line-height: 1.65; color: #444; margin-bottom: 15px; }
-        .info-modal-content ul { padding-left: 25px; }
-        .info-modal-content li { margin-bottom: 10px; }
-        .info-modal-content strong { color: #222; }
-        .close-info-button {
-            background-color: #6c757d; color: white; padding: 12px 25px; border: none;
-            border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer;
-            transition: background-color 0.2s; display: block; margin: 25px auto 0 auto; min-width: 120px;
-        }
-        .close-info-button:hover { background-color: #5a6268; }
 
+        .end-game-display .emoji-icon {
+            font-size: 4em; /* Größeres Emoji */
+            margin-bottom: 15px;
+        }
+
+        .end-game-display .message {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px; /* Abstand zum Button */
+            text-align: center;
+            padding: 0 10px; /* Kleiner horizontaler Padding */
+        }
+
+        .end-game-display .play-again-button { /* Angepasster Selektor */
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+        .end-game-display .play-again-button:hover {
+            background-color: #0056b3;
+        }
+        /* --- ENDE NEUE ELEMENTE --- */
+
+
+        /* Das Board-Overlay blockiert Interaktion während der Sequenz */
+        /* Es hat keinen Hintergrund mehr, außer im initialen Menü-Fokus-Modus */
+        .game-board .board-overlay { /* Klassennamen geändert */
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            /* background-color: removed; */ /* Hintergrund nur bei initial-focus-menu */
+            z-index: 5; /* Unter dem End-Game Display */
+            display: none; /* Standardmäßig versteckt */
+        }
 
         @media (max-width: 320px) {
             .tile { font-size: 2em; }
             .container {
-                padding-top: 30px; padding-right: 15px; padding-left: 15px; padding-bottom: 60px; margin-top: 50px;
+                padding-top: 30px;
+                padding-right: 15px;
+                padding-left: 15px;
+                padding-bottom: 60px;
+                margin-top: 50px;
             }
-            #controlBarLogo { right: 15px; bottom: 15px; width: 35px; height: 35px; }
-            .end-game-display .emoji-icon { font-size: 3em; }
-            .end-game-display .message { font-size: 1em; }
-            .info-modal-content { padding: 20px; }
-            .info-modal-content h2 { font-size: 1.2em; }
-            .info-modal-content p, .info-modal-content ul { font-size: 0.9em; }
+            #controlBarLogo {
+                right: 15px;
+                bottom: 15px;
+                width: 35px;
+                height: 35px;
+            }
+             .end-game-display .emoji-icon {
+                font-size: 3em; /* Kleineres Emoji auf kleinen Screens */
+             }
+             .end-game-display .message {
+                font-size: 1em;
+             }
         }
     </style>
 </head>
@@ -447,13 +443,7 @@
                     <select id="voiceSelect"><option value="">Standard</option></select>
                 </div>
             </div>
-            <div class="settings-menu-footer">
-                <!-- REIHENFOLGE GEÄNDERT: Start-Button zuerst -->
-                <button id="applySettingsAndStartButton" class="apply-button">Start</button>
-                <button id="infoButton" class="info-button" aria-label="Informationen für Eltern">
-                    ℹ
-                </button>
-            </div>
+            <button id="applySettingsAndStartButton" class="apply-button">Start</button>
         </div>
     </div>
     <div id="menuOverlay" class="menu-overlay"></div>
@@ -462,12 +452,18 @@
         <h1>Plapperschlange</h1>
         <h2>Wörter mit K am Anfang</h2>
         <div class="game-board" id="gameBoard">
+            <!-- Das Overlay, das Klicks während der Sequenz blockiert -->
             <div class="board-overlay" id="boardOverlay"></div>
+
+            <!-- NEUER CONTAINER FÜR DAS END-GAME DISPLAY -->
             <div class="end-game-display" id="endGameDisplay">
-                <div class="emoji-icon">👍</div>
-                <div class="message" id="endGameMessage"></div>
+                <div class="emoji-icon">👍</div> <!-- Daumen hoch Emoji -->
+                <div class="message" id="endGameMessage"></div> <!-- Für die Ergebnisnachricht -->
                 <button id="playAgainButton" class="play-again-button">Nochmal spielen?</button>
             </div>
+            <!-- ENDE NEUER CONTAINER -->
+
+            <!-- Kacheln werden hier von populateBoard() eingefügt -->
         </div>
 
         <div class="progress-circles" id="progressCircles"></div>
@@ -479,41 +475,7 @@
         </div>
     </div>
 
-    <div id="infoModal" class="info-modal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle" aria-hidden="true">
-        <div class="info-modal-content">
-            <h2 id="infoModalTitle">Informationen für Eltern</h2>
-            <p>
-                Liebe Eltern, mit der "Plapperschlange" können Sie spielerisch die <strong>Ausprache</strong>, das <strong>auditive Gedächtnis</strong>
-                und die <strong>Konzentrationsfähigkeit</strong> Ihres Kindes fördern. Dieses Spiel hilft dabei, gehörte Wortsequenzen
-                kurzzeitig zu speichern und korrekt wiederzugeben.
-            </p>
-            <p>So nutzen Sie die Einstellungen optimal:</p>
-            <ul>
-                <li><strong>Anzahl der Wörter:</strong> Beginnen Sie mit einer geringen Anzahl (z.B. 2 oder 3 Wörter),
-                    besonders bei jüngeren Kindern oder wenn Ihr Kind das Spiel zum ersten Mal spielt.
-                    Steigern Sie die Anzahl langsam, sobald Ihr Kind sicherer wird. Dies trainiert die Merkspanne.</li>
-                <li><strong>Durchgänge:</strong> Eine moderate Anzahl an Durchgängen (z.B. 5 bis 10) ist meist ideal,
-                    um die Aufmerksamkeit aufrechtzuerhalten, ohne zu überfordern. Kurze, regelmäßige Spieleinheiten
-                    sind oft effektiver als lange.</li>
-                <li><strong>Abstand zwischen Wörtern:</strong> Ein längerer Abstand (z.B. 500 bis 800 Millisekunden)
-                    gibt Ihrem Kind mehr Zeit, jedes Wort zu verarbeiten, bevor das nächste kommt. Experimentieren Sie,
-                    welcher Abstand für Ihr Kind am besten passt. Ein kürzerer Abstand erhöht den Schwierigkeitsgrad.</li>
-                <li><strong>Stimme:</strong> Lassen Sie Ihr Kind eine Stimme auswählen, die es als angenehm empfindet.
-                    Eine vertraute oder klare Stimme kann das Zuhören erleichtern.</li>
-            </ul>
-            <p>
-                Beobachten Sie Ihr Kind beim Spielen: Hat es Spaß? Ist es frustriert oder unterfordert?
-                Passen Sie die Einstellungen entsprechend an. Das wichtigste Ziel ist, Freude am Lernen zu vermitteln
-                und das Selbstvertrauen Ihres Kindes zu stärken!
-            </p>
-            <button id="closeInfoModalButton" class="close-info-button">Verstanden</button>
-        </div>
-    </div>
-
     <script>
-        // JavaScript bleibt unverändert zur vorherigen Version,
-        // da die Logik für das Info-Modal bereits korrekt implementiert war
-        // und die Positionsänderung reine HTML/CSS-Sache ist.
         const EMOJIS_DATA = [
             { emoji: '🐄', word: 'Kuh', id: 0 }, { emoji: '🧀', word: 'Käse', id: 1 },
             { emoji: '🥶', word: 'kalt', id: 2 }, { emoji: '😺', word: 'Katze', id: 3 },
@@ -544,10 +506,11 @@
         const applySettingsAndStartButton = document.getElementById('applySettingsAndStartButton');
 
         const gameBoardElement = document.getElementById('gameBoard');
-        const boardOverlay = document.getElementById('boardOverlay');
-        const endGameDisplay = document.getElementById('endGameDisplay');
-        const endGameMessageElement = endGameDisplay.querySelector('.message');
-        const playAgainButtonElement = endGameDisplay.querySelector('.play-again-button');
+        const boardOverlay = document.getElementById('boardOverlay'); // Das Overlay zum Blockieren während der Sequenz
+        const endGameDisplay = document.getElementById('endGameDisplay'); // DER NEUE CONTAINER
+        const endGameMessageElement = endGameDisplay.querySelector('.message'); // Nachricht innerhalb des neuen Containers
+        const playAgainButtonElement = endGameDisplay.querySelector('.play-again-button'); // Button innerhalb des neuen Containers
+
 
         const sequenceLengthSelect = document.getElementById('sequenceLength');
         const numRoundsSelect = document.getElementById('numRounds');
@@ -555,11 +518,6 @@
         const voiceSelect = document.getElementById('voiceSelect');
         const repeatButton = document.getElementById('repeatButton');
         const progressCirclesContainer = document.getElementById('progressCircles');
-
-        const infoButton = document.getElementById('infoButton');
-        const infoModal = document.getElementById('infoModal');
-        const closeInfoModalButton = document.getElementById('closeInfoModalButton');
-
 
         // Spielzustandsvariablen
         let currentSequence = [];
@@ -576,17 +534,30 @@
         let roundAttempts = 0;
         const MAX_ATTEMPTS_PER_ROUND = 2;
         let gameWasPausedByMenu = false;
-        let firstLoad = true;
+        let firstLoad = true; // Wird verwendet, um den Initialfokus auf das Menü zu steuern
 
         async function ensureAudioContext() {
             if (!audioContext || audioContext.state === 'closed') {
+                console.log("AudioContext wird neu erstellt.");
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) { console.warn("AudioContext konnte nicht initialisiert werden.", e); return null; }
+                } catch (e) {
+                    console.warn("AudioContext konnte nicht initialisiert werden.", e);
+                    return null;
+                }
             }
+             console.log("AudioContext Status:", audioContext.state);
             if (audioContext.state === 'suspended') {
-                try { await audioContext.resume(); } catch (e) { console.warn("AudioContext resume fehlgeschlagen.", e); return null; }
+                console.log("AudioContext ist suspended, versuche resume().");
+                try {
+                    await audioContext.resume();
+                     console.log("AudioContext resumed erfolgreich.");
+                } catch (e) {
+                    console.warn("AudioContext resume fehlgeschlagen.", e);
+                    return null;
+                }
             }
+             console.log("AudioContext bereit.");
             return audioContext;
         }
 
@@ -603,31 +574,15 @@
             repeatButton.addEventListener('click', repeatCurrentSequence);
             voiceSelect.addEventListener('change', handleVoiceChange);
 
-            infoButton.addEventListener('click', () => {
-                infoModal.classList.add('visible');
-                infoModal.setAttribute('aria-hidden', 'false');
-                // closeInfoModalButton.focus();
-            });
-            closeInfoModalButton.addEventListener('click', () => {
-                infoModal.classList.remove('visible');
-                infoModal.setAttribute('aria-hidden', 'true');
-            });
-            infoModal.addEventListener('click', (event) => {
-                if (event.target === infoModal) {
-                    infoModal.classList.remove('visible');
-                    infoModal.setAttribute('aria-hidden', 'true');
-                }
-            });
-
-
             settingsMenu.setAttribute('aria-hidden', 'true');
             menuToggleButton.setAttribute('aria-expanded', 'false');
 
+            // Initialer Zustand: Menü offen, Spielfeld unscharf und überlagert
             if (firstLoad) {
-                toggleMenu(true);
+                toggleMenu(true); // Öffnet das Menü und setzt boardOverlay display: block
                 gameBoardElement.classList.add('initial-focus-menu');
             }
-            updateSettingsAccess(false);
+            updateSettingsAccess(false); // Einstellungen sind anfangs bearbeitbar
         });
 
         function initializeVoiceSelection() {
@@ -648,6 +603,7 @@
                             voiceSelect.value = savedVoiceURI;
                             selectedVoice = germanVoices.find(v => v.voiceURI === savedVoiceURI);
                         } else if (germanVoices.length > 0) {
+                            // Wähle die erste deutsche Stimme standardmäßig, wenn keine gespeichert
                             voiceSelect.value = germanVoices[0].voiceURI;
                             selectedVoice = germanVoices[0];
                         }
@@ -656,9 +612,13 @@
                     }
                     updateSettingsAccess(gameActive);
                 };
+                // voiceschanged Event kann mehrfach gefeuert werden
                 speechSynthesis.onvoiceschanged = populateVoices;
+                 // Sofort versuchen, Stimmen zu laden, falls Event schon gefeuert ist
                 populateVoices();
+
             } else {
+                console.warn("TTS nicht unterstützt.");
                 voiceSelect.innerHTML = '<option value="">TTS nicht unterstützt</option>';
                 voiceSelect.disabled = true;
             }
@@ -678,18 +638,21 @@
         }
 
         function populateBoard() {
-            gameBoardElement.querySelectorAll('.tile').forEach(tile => tile.remove());
+            // Kacheln einfügen, boardOverlay und endGameDisplay sind bereits im HTML
+            gameBoardElement.querySelectorAll('.tile').forEach(tile => tile.remove()); // Vorhandene Kacheln entfernen
             EMOJIS_DATA.forEach(item => {
                 const tile = document.createElement('div');
                 tile.classList.add('tile');
                 tile.dataset.id = item.id;
                 tile.textContent = item.emoji;
                 tile.addEventListener('click', () => handleTileClick(item.id));
+                // Füge Kachel vor den Overlays ein, damit Overlays oben liegen
+                // Überprüfe, ob boardOverlay und endGameDisplay existieren, bevor eingefügt wird
                 const referenceNode = boardOverlay && endGameDisplay ? (boardOverlay.compareDocumentPosition(endGameDisplay) & Node.DOCUMENT_POSITION_FOLLOWING ? boardOverlay : endGameDisplay) : boardOverlay || endGameDisplay;
                 if (referenceNode && referenceNode.parentNode === gameBoardElement) {
                      gameBoardElement.insertBefore(tile, referenceNode);
                 } else {
-                     gameBoardElement.appendChild(tile);
+                     gameBoardElement.appendChild(tile); // Fallback, falls Overlays nicht gefunden werden
                 }
             });
         }
@@ -698,88 +661,124 @@
             const isOpen = settingsMenu.classList.contains('active');
             const show = forceOpen !== null ? forceOpen : !isOpen;
 
-            if (infoModal.classList.contains('visible')) {
-                infoModal.classList.remove('visible');
-                infoModal.setAttribute('aria-hidden', 'true');
-            }
-
             if (show) {
+                // Menü öffnen
                 settingsMenu.classList.add('active');
                 menuOverlay.classList.add('active');
                 menuToggleButton.setAttribute('aria-expanded', 'true');
                 settingsMenu.setAttribute('aria-hidden', 'false');
+
+                // Wenn das End-Game Display sichtbar ist, ausblenden, wenn das Menü geöffnet wird
                 if (endGameDisplay.classList.contains('visible')) {
                     endGameDisplay.classList.remove('visible');
                 }
+
                 if (gameActive) {
-                    disableBoardInteraction(true);
-                    updateSettingsAccess(false);
+                    disableBoardInteraction(true); // Blockiert das Spielfeld hinter dem Menü
+                    updateSettingsAccess(false); // Einstellungen im Menü werden immer bedienbar, wenn Menü offen ist
                     gameWasPausedByMenu = true;
+                     // TTS bei Menü-Öffnung im Spiel abbrechen
                     if ('speechSynthesis' in window && speechSynthesis.speaking) {
                          speechSynthesis.cancel();
                     }
                 } else {
+                     // Wenn Spiel NICHT aktiv (z.B. vor Start oder nach Ende mit sichtbarem End-Game Display),
+                     // sind die Einstellungen im Menü immer bearbeitbar.
                      updateSettingsAccess(false);
                 }
+
             } else {
+                // Menü schließen
                 settingsMenu.classList.remove('active');
                 menuOverlay.classList.remove('active');
                 menuToggleButton.setAttribute('aria-expanded', 'false');
                 settingsMenu.setAttribute('aria-hidden', 'true');
+
+                // JavaScript Repaint Workaround für iOS (kannst du einkommentieren, wenn Darstellungsprobleme nach Menüschließen bestehen)
+                // if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                //     const forceReflow = el => el.offsetHeight; // Trick, um Reflow zu erzwingen
+                //     forceReflow(document.body);
+                // }
+
                 if (gameActive && gameWasPausedByMenu) {
-                    if (!firstLoad) {
-                         disableBoardInteraction(false);
+                     // Wenn das Spiel aktiv war und DURCH das Menü pausiert wurde
+                    if (!firstLoad) { // Nicht beim allerersten Laden des Spiels
+                         disableBoardInteraction(false); // Spielfeld wieder bedienbar machen
                     }
-                    updateSettingsAccess(true);
-                    gameWasPausedByMenu = false;
+                    updateSettingsAccess(true); // Einstellungen im Menü wieder sperren
+                    gameWasPausedByMenu = false; // Zustand zurücksetzen
                 } else if (!gameActive && firstLoad) {
-                     disableBoardInteraction(false);
-                     gameBoardElement.classList.remove('initial-focus-menu');
+                     // Spezialfall: Menü beim ersten Laden geschlossen, ohne Spiel gestartet zu haben
+                     disableBoardInteraction(false); // BoardOverlay entfernen
+                     gameBoardElement.classList.remove('initial-focus-menu'); // Blur entfernen
                      firstLoad = false;
-                     updateSettingsAccess(false);
+                     updateSettingsAccess(false); // Einstellungen bleiben bearbeitbar
                 } else if (!gameActive && !endGameDisplay.classList.contains('visible')) {
-                     disableBoardInteraction(false);
-                     updateSettingsAccess(false);
+                     // Wenn Spiel nicht aktiv (aber nicht im Initialzustand) UND End-Game Display nicht sichtbar ist
+                     // Dies deckt den Fall ab, dass Spiel beendet wurde und Menü GEÖFFNET und dann GESCHLOSSEN wurde
+                     // oder Spiel abgebrochen wurde.
+                     disableBoardInteraction(false); // Sicherstellen, dass boardOverlay weg ist
+                     updateSettingsAccess(false); // Einstellungen bearbeitbar lassen
                 }
+                 // Wenn das End-Game Display sichtbar war und durch das Menü geöffnet ausgeblendet wurde,
+                 // wird es beim Schließen des Menüs NICHT automatisch wieder eingeblendet.
+                 // Der Spieler muss "Nochmal spielen" klicken.
+
+                 // updateButtonStates hängt vom boardOverlay ab, also nach disableBoardInteraction() aufrufen
                  updateButtonStates(gameActive);
             }
         }
 
         async function handleApplySettingsAndStart() {
+            // Verstecke das End-Game Display, falls es sichtbar ist
             if (endGameDisplay.classList.contains('visible')) {
                  endGameDisplay.classList.remove('visible');
             }
+            // Entferne den Initial-Blur/Grauebene, falls vorhanden
             if (gameBoardElement.classList.contains('initial-focus-menu')) {
                  gameBoardElement.classList.remove('initial-focus-menu');
             }
-            firstLoad = false;
-            endGameMessageElement.textContent = '';
-            toggleMenu(false);
+             firstLoad = false; // Spiel startet jetzt, nicht mehr First Load
+
+            endGameMessageElement.textContent = ''; // Alte Nachricht löschen
+            // endGameActionsElement.style.display = 'none'; // Diesen Schritt brauchen wir nicht mehr, da der Container ausgeblendet wird
+
+            toggleMenu(false); // Stellt sicher, dass das Menü geschlossen wird
+
             if (gameActive) {
-                await abortGame(false);
+                await abortGame(false); // Aktuelles Spiel abbrechen, keine Nachricht anzeigen
             }
             await startGame();
         }
 
         async function handlePlayAgain() {
+            // Beim Klick auf "Nochmal spielen" das End-Game Display ausblenden und Spiel starten
             if (endGameDisplay.classList.contains('visible')) {
                  endGameDisplay.classList.remove('visible');
             }
             endGameMessageElement.textContent = '';
-            await abortGame(false);
+            // endGameActionsElement.style.display = 'none'; // Nicht mehr nötig
+
+            await abortGame(false); // Reinigt den Zustand ohne Nachricht
             await startGame();
         }
 
         async function startGame() {
-            if (gameActive) return;
+            if (gameActive) return; // Kein neues Spiel starten, wenn bereits aktiv
             gameActive = true;
+
             endGameMessageElement.textContent = '';
-            await ensureAudioContext();
+            // endGameActionsElement.style.display = 'none'; // Nicht mehr nötig
+            // endGameDisplay.classList.remove('visible'); // Sicherstellen, dass es versteckt ist
+
+            await ensureAudioContext(); // Sicherstellen, dass AudioContext läuft
+
             sequenceLength = parseInt(sequenceLengthSelect.value);
             totalRounds = parseInt(numRoundsSelect.value);
             wordSpacing = parseInt(wordSpacingSelect.value);
             currentRound = 0; correctRounds = 0; playerSequence = []; roundAttempts = 0;
             gameWasPausedByMenu = false;
+
             updateButtonStates(true);
             updateSettingsAccess(true);
             initializeProgressCircles(totalRounds);
@@ -787,62 +786,97 @@
         }
 
         async function abortGame(showMessage = true) {
+            // Diese Funktion wird zum Bereinigen des Zustands verwendet,
+            // z.B. wenn das Spiel abgebrochen wird oder vor einem Neustart.
+            // Wenn showMessage false ist, wird keine "Spiel abgebrochen" Nachricht angezeigt.
+            // Wenn das End-Game Display sichtbar war, wird es hier nicht explizit versteckt,
+            // das passiert beim Start oder beim Öffnen des Menüs.
+
             const wasActuallyActive = gameActive;
             gameActive = false;
             gameWasPausedByMenu = false;
+
             currentSequence = []; playerSequence = [];
+
+            // boardOverlay wird immer entfernt, es sei denn, das Menü ist geöffnet
             if (!settingsMenu.classList.contains('active')) {
                 disableBoardInteraction(false);
             }
-            updateButtonStates(false);
-            updateSettingsAccess(false);
-            clearProgressCircles();
+
+            updateButtonStates(false); // Repeat-Button deaktivieren
+            updateSettingsAccess(false); // Einstellungen wieder bearbeitbar machen (wenn Menü offen)
+            clearProgressCircles(); // Fortschrittsanzeige zurücksetzen
+
+             // Active und Error-Klassen von den Kacheln entfernen
             document.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
                 t.classList.remove('active'); t.classList.remove('error-input');
             });
+
             if (showMessage && wasActuallyActive) {
                 endGameMessageElement.textContent = 'Spiel abgebrochen.';
-                endGameDisplay.classList.add('visible');
-                endGameDisplay.querySelector('.emoji-icon').style.display = 'none';
-                playAgainButtonElement.style.display = 'none';
+                 // Wir zeigen die Abbruch-Nachricht jetzt im neuen End-Game Display an
+                 endGameDisplay.classList.add('visible');
+                 // Da wir keine "Nochmal spielen" Option nach Abbruch zeigen wollen,
+                 // blenden wir den Button und das Emoji im End-Game Display aus oder ändern den Inhalt.
+                 // Stattdessen können wir einfach den Text setzen und den Button verstecken.
+                 endGameDisplay.querySelector('.emoji-icon').style.display = 'none';
+                 playAgainButtonElement.style.display = 'none';
+                 // Das End-Game Display bleibt sichtbar, bis Spiel neu gestartet oder Menü geöffnet wird.
             } else {
                  endGameMessageElement.textContent = '';
-                 endGameDisplay.classList.remove('visible');
-                 endGameDisplay.querySelector('.emoji-icon').style.display = '';
-                 playAgainButtonElement.style.display = '';
+                 endGameDisplay.classList.remove('visible'); // End-Game Display verstecken, falls es da war
+                 endGameDisplay.querySelector('.emoji-icon').style.display = ''; // Emoji wieder anzeigen (für nächstes Ende)
+                 playAgainButtonElement.style.display = ''; // Button wieder anzeigen (für nächstes Ende)
             }
+
+
             if ('speechSynthesis' in window && speechSynthesis.speaking) {
-                 speechSynthesis.cancel();
+                 speechSynthesis.cancel(); // TTS abbrechen
+                 // Kleine Pause, damit cancel wirksam wird, bevor wir versuchen, AudioContext zu nutzen
                  await sleep(50);
             }
+            // AudioContext bei Abbruch nicht schließen, könnte für Sounds gebraucht werden
+
         }
 
+
         function updateButtonStates(isPlaying) {
+            // Repeat-Button ist nur im aktiven Spielzustand bedienbar UND wenn das boardOverlay NICHT aktiv ist
+            // (ausser wenn das Spiel vom Menü pausiert wurde, dann ist boardOverlay aktiv, aber der Button sollte auch deaktiviert sein)
             const isBoardBlocked = boardOverlay.style.display === 'block' && !gameWasPausedByMenu;
             repeatButton.disabled = !isPlaying || currentSequence.length === 0 || isBoardBlocked;
         }
 
         function updateSettingsAccess(gameIsRunning) {
+            // Steuert, ob die Settings-Dropdowns im Menü DISABLED sind
             sequenceLengthSelect.disabled = gameIsRunning;
             numRoundsSelect.disabled = gameIsRunning;
             wordSpacingSelect.disabled = gameIsRunning;
+
             const ttsGenerallyAvailable = 'speechSynthesis' in window;
+            // Stimmenliste muss geladen sein, um eine nicht-Standardstimme auszuwählen
             const voicesLoaded = availableVoices.length > 0;
+
             if (!ttsGenerallyAvailable) {
                 voiceSelect.disabled = true;
                 const defaultOption = voiceSelect.querySelector('option[value=""]');
                 if (defaultOption) { defaultOption.textContent = "TTS nicht unterstützt"; }
             } else if (gameIsRunning) {
+                // Wenn Spiel läuft, ist die Stimmauswahl deaktiviert
                 voiceSelect.disabled = true;
             } else {
+                 // Wenn Spiel nicht läuft, Stimmauswahl aktivieren, wenn Stimmen verfügbar sind
                  voiceSelect.disabled = !voicesLoaded || !availableVoices.some(v => v.lang.startsWith('de'));
                   if (!voicesLoaded && !voiceSelect.querySelector('option[value=""]').textContent.includes("geladen")) {
+                     // Nur ändern, wenn noch nicht auf "Stimmen werden geladen..." gesetzt
                      const defaultOption = voiceSelect.querySelector('option[value=""]');
                      if (defaultOption) { defaultOption.textContent = "Stimmen werden geladen..."; }
                   } else if (voicesLoaded && !availableVoices.some(v => v.lang.startsWith('de'))) {
+                     // Wenn Stimmen geladen, aber keine deutschen
                      const defaultOption = voiceSelect.querySelector('option[value=""]');
                       if (defaultOption) { defaultOption.textContent = "Keine dt. Stimme verfügbar"; }
                   } else if (voicesLoaded && availableVoices.some(v => v.lang.startsWith('de')) && !voiceSelect.querySelector('option[value=""]').textContent.includes("Standard (Browser)")) {
+                      // Wenn Stimmen geladen und deutsche da, und der Text noch falsch ist
                       const defaultOption = voiceSelect.querySelector('option[value=""]');
                       if (defaultOption) { defaultOption.textContent = "Standard (Browser)"; }
                   }
@@ -865,23 +899,35 @@
                 circles[roundIndex].classList.add(isCorrect ? 'correct' : 'incorrect');
             }
         }
+        // Diese Funktion steuert NUR das boardOverlay, nicht das endGameDisplay
         function disableBoardInteraction(disable) { boardOverlay.style.display = disable ? 'block' : 'none'; }
 
+
         async function nextRound() {
-            if (!gameActive) return;
+            if (!gameActive) return; // Runde nicht starten, wenn Spiel nicht aktiv
+
             if (currentRound >= totalRounds) {
-                await endGame(); return;
+                await endGame(); // Spiel beendet
+                return;
             }
-            playerSequence = []; roundAttempts = 0;
-            disableBoardInteraction(true);
-            repeatButton.disabled = true;
-            currentSequence = generateRandomSequence(sequenceLength);
-            await sleep(500);
-            await playSequence(currentSequence);
+
+            playerSequence = []; // Spielereingabe zurücksetzen
+            roundAttempts = 0; // Versuche zurücksetzen
+            disableBoardInteraction(true); // Spielfeld während Sequenz blockieren
+            repeatButton.disabled = true; // Wiederholen-Button deaktivieren
+            currentSequence = generateRandomSequence(sequenceLength); // Neue Sequenz generieren
+            console.log(`Runde ${currentRound + 1}. Erwartet:`, currentSequence.map(id => EMOJIS_DATA.find(d=>d.id===id)?.word || 'Unbekannt'));
+
+            await sleep(500); // Kleine Pause vor Wiedergabe
+            await playSequence(currentSequence); // Sequenz abspielen
+
             if (gameActive && !gameWasPausedByMenu) {
+                 // Nur Spielfeld wieder aktivieren, wenn Spiel noch läuft und nicht vom Menü pausiert wurde
                 disableBoardInteraction(false);
             }
-            updateButtonStates(gameActive);
+             // Button States werden immer nach playSequence aktualisiert, basierend auf gameActive und boardOverlay Zustand
+             updateButtonStates(gameActive);
+
         }
 
         function generateRandomSequence(length) {
@@ -895,175 +941,293 @@
         }
 
         async function playSequence(sequence, isRepeat = false) {
-            if (!gameActive && !isRepeat) return;
-            disableBoardInteraction(true);
-            repeatButton.disabled = true;
-            gameBoardElement.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
+            // isRepeat = true, wenn playSequence vom Repeat-Button aufgerufen wird
+            if (!gameActive && !isRepeat) return; // Sequenz nur im aktiven Spiel spielen (oder wenn explizit wiederholt wird)
+
+            disableBoardInteraction(true); // Während Wiedergabe blockieren
+            repeatButton.disabled = true; // Wiederholen während Wiedergabe deaktivieren
+
+             // Sicherstellen, dass keine aktive oder Error-Klasse von vorheriger Runde/Versuch übrig ist
+             gameBoardElement.querySelectorAll('.tile.active, .tile.error-input').forEach(t => {
                 t.classList.remove('active'); t.classList.remove('error-input');
-            });
+             });
+
+
             for (const itemId of sequence) {
+                // Abbruch, wenn Spiel beendet wurde (z.B. durch Menü) oder wenn nicht wiederholt wird UND nicht aktiv
                 if (!gameActive && !isRepeat) break;
+
                 const itemData = EMOJIS_DATA.find(d => d.id === itemId);
                 const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
                 if (itemData && tileElement) {
-                    tileElement.classList.add('active');
-                    await speak(itemData.word);
-                    await sleep(100);
-                    tileElement.classList.remove('active');
+                    tileElement.classList.add('active'); // Kachel hervorheben
+                    await speak(itemData.word); // Wort sprechen
+                    await sleep(100); // Kurze Pause nach Sprechen
+                    tileElement.classList.remove('active'); // Kachel Normalzustand
                 }
-                if (gameActive || isRepeat) {
-                     await sleep(wordSpacing);
-                } else { break; }
+                if (gameActive || isRepeat) { // Nur Pause einfügen, wenn Spiel aktiv ist oder es eine Wiederholung ist
+                     await sleep(wordSpacing); // Wartezeit zwischen Wörtern
+                } else {
+                    // Wenn Spiel während der Pause in playSequence beendet wurde
+                    break; // Abbruch
+                }
             }
-            if (gameActive && !gameWasPausedByMenu) {
-                 disableBoardInteraction(false);
-            } else if (!gameActive && isRepeat) {
-                  disableBoardInteraction(false);
-            }
-            updateButtonStates(gameActive);
+
+             // Nach Wiedergabe:
+             if (gameActive && !gameWasPausedByMenu) {
+                 disableBoardInteraction(false); // Spielfeld zur Eingabe freigeben
+             } else if (!gameActive && isRepeat) {
+                  // Wenn Spiel während der Wiedergabe beendet wurde, aber es eine Wiederholung war
+                  disableBoardInteraction(false); // Spielfeld trotzdem freigeben
+             }
+             // Button States werden immer hier aktualisiert
+             updateButtonStates(gameActive);
         }
 
         async function repeatCurrentSequence() {
+            // Wiederholen nur erlauben, wenn Spiel aktiv ist, eine Sequenz existiert und Spielfeld nicht blockiert ist (außer durch Menüpause)
             const isBoardBlocked = boardOverlay.style.display === 'block' && !gameWasPausedByMenu;
             if (!gameActive || currentSequence.length === 0 || isBoardBlocked) return;
-            await playSequence(currentSequence, true);
+            await playSequence(currentSequence, true); // Sequenz als Wiederholung abspielen
         }
 
         function speak(text) {
             return new Promise(async (resolve) => {
                 if (!('speechSynthesis' in window) || !text) { resolve(); return; }
+                // Cancel vorherige Sprache, wenn nötig (wird in toggleMenu oder abortGame gecancelled)
+                // if (speechSynthesis.speaking) {
+                //     speechSynthesis.cancel();
+                //     // Kurze Pause, um Cancel wirksam werden zu lassen
+                //     await sleep(50);
+                // }
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'de-DE';
+                utterance.lang = 'de-DE'; // Sprache festlegen
                 if (selectedVoice) {
-                     utterance.voice = selectedVoice;
+                     utterance.voice = selectedVoice; // Ausgewählte Stimme verwenden
                 } else {
+                    // Finde eine passende deutsche Standardstimme
                     const voices = speechSynthesis.getVoices();
                     const defaultGermanVoice = voices.find(v => v.lang.startsWith('de') && v.default) ||
                                              voices.find(v => v.lang.startsWith('de'));
                     if (defaultGermanVoice) utterance.voice = defaultGermanVoice;
                 }
-                utterance.onend = () => resolve();
-                utterance.onerror = (event) => { console.error('TTS Error:', event.error); resolve(); };
+                utterance.onend = () => resolve(); // Promise auflösen, wenn Sprechen beendet ist
+                utterance.onerror = (event) => {
+                    console.error('TTS Error:', event.error); // Fehlerdetails loggen
+                    resolve(); // Promise auch bei Fehler auflösen, damit Spiel weiterläuft
+                };
                 speechSynthesis.speak(utterance);
             });
         }
 
         async function playClickSound() {
             const ctx = await ensureAudioContext();
-            if (!ctx) { return; }
+            if (!ctx) {
+                 console.warn("Click sound: AudioContext not ready");
+                 return; // Kein Sound, wenn AudioContext nicht verfügbar
+            }
+
             const clickTime = ctx.currentTime;
             const oscillator = ctx.createOscillator();
-            oscillator.type = 'triangle';
-            oscillator.frequency.setValueAtTime(800, clickTime);
-            oscillator.frequency.exponentialRampToValueAtTime(400, clickTime + 0.05);
+            oscillator.type = 'triangle'; // Wellenform
+            oscillator.frequency.setValueAtTime(800, clickTime); // Startfrequenz
+            oscillator.frequency.exponentialRampToValueAtTime(400, clickTime + 0.05); // Frequenzabfall
             const gainNode = ctx.createGain();
-            gainNode.gain.setValueAtTime(0.15, clickTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, clickTime + 0.08);
-            oscillator.connect(gainNode); gainNode.connect(ctx.destination);
-            oscillator.start(clickTime); oscillator.stop(clickTime + 0.08);
+            gainNode.gain.setValueAtTime(0.15, clickTime); // Startlautstärke
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, clickTime + 0.08); // Lautstärkeabfall
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            oscillator.start(clickTime);
+            oscillator.stop(clickTime + 0.08); // Kurzer Ton
         }
 
         async function playErrorSound() {
             const ctx = await ensureAudioContext();
-            if (!ctx) { return; }
+            if (!ctx) {
+                 console.warn("Error sound: AudioContext not ready");
+                 return;
+            }
+
             const oscillator = ctx.createOscillator();
             const gainNode = ctx.createGain();
             oscillator.connect(gainNode); gainNode.connect(ctx.destination);
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(120, ctx.currentTime);
-            gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-            const duration = 0.2;
+            oscillator.type = 'sawtooth'; // Wellenform
+            oscillator.frequency.setValueAtTime(120, ctx.currentTime); // Frequenz
+            gainNode.gain.setValueAtTime(0.1, ctx.currentTime); // Lautstärke
+            const duration = 0.2; // Dauer
             oscillator.start(ctx.currentTime);
             oscillator.stop(ctx.currentTime + duration);
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
-            await sleep(duration * 1000 + 50);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration); // Lautstärkeabfall
+            await sleep(duration * 1000 + 50); // Warten, bis Sound endet
         }
 
         async function handleTileClick(itemId) {
+            // Klick nur verarbeiten, wenn Spiel aktiv ist UND Spielfeld nicht blockiert ist
+            // Das boardOverlay blockiert Klicks während der Sequenz.
+            // Das endGameDisplay blockiert Klicks, wenn es sichtbar ist.
             if (!gameActive || boardOverlay.style.display === 'block' || endGameDisplay.classList.contains('visible')) return;
-            playClickSound();
+
+            playClickSound(); // Klick-Sound abspielen
+
             const tileElement = gameBoardElement.querySelector(`.tile[data-id='${itemId}']`);
-            const currentClickIndex = playerSequence.length;
+
+            // Überprüfen, ob die Eingabe korrekt ist
+            const currentClickIndex = playerSequence.length; // Index des aktuellen Klicks
             if (currentClickIndex < currentSequence.length && itemId === currentSequence[currentClickIndex]) {
-                playerSequence.push(itemId);
+                 // Korrekte Eingabe
+                playerSequence.push(itemId); // Item zur Spielereingabe hinzufügen
+
                 if (tileElement) {
-                    tileElement.classList.add('active');
-                    setTimeout(() => tileElement.classList.remove('active'), 300);
+                    tileElement.classList.add('active'); // Kachel hervorheben
+                    setTimeout(() => tileElement.classList.remove('active'), 300); // Nach kurzer Zeit Normalzustand
                 }
+
                 if (playerSequence.length === currentSequence.length) {
+                    // Sequenz komplett und korrekt eingegeben
                     await evaluatePlayerInput(true);
                 }
             } else {
+                // Falsche Eingabe
                 if (tileElement) {
-                    tileElement.classList.add('error-input');
-                    setTimeout(() => tileElement.classList.remove('error-input'), 600);
+                    tileElement.classList.add('error-input'); // Kachel als Fehler markieren
+                    setTimeout(() => tileElement.classList.remove('error-input'), 600); // Nach kurzer Zeit Normalzustand
                 }
+                // Falsche Eingabe zählt als Versuch, fügen sie aber nicht zur playerSequence hinzu,
+                // die Sequenz muss komplett neu eingegeben werden.
+                // playerSequence = []; // Wird in evaluatePlayerInput bei falscher Eingabe zurückgesetzt
                 await evaluatePlayerInput(false);
             }
         }
 
         async function evaluatePlayerInput(isCorrectInput) {
-            if (!gameActive) return;
+            if (!gameActive) return; // Nichts tun, wenn Spiel nicht aktiv
+
+            // Spielfeld blockieren, während Ergebnis ausgewertet wird
             disableBoardInteraction(true);
-            repeatButton.disabled = true;
+            repeatButton.disabled = true; // Wiederholen deaktivieren
+
             if (isCorrectInput) {
-                updateProgressCircle(currentRound, true); correctRounds++;
-                await sleep(150); await playFixedRewardMelody(true);
-                currentRound++; playerSequence = []; roundAttempts = 0;
-                await sleep(500); await nextRound();
+                // Runde erfolgreich
+                updateProgressCircle(currentRound, true); // Fortschrittsanzeige aktualisieren (grün)
+                correctRounds++; // Zähler für richtige Runden erhöhen
+                await sleep(150); // Kleine Pause
+                await playFixedRewardMelody(true); // Erfolgsmelodie für Runde
+                currentRound++; // Nächste Runde vorbereiten
+                playerSequence = []; // Spielereingabe zurücksetzen
+                roundAttempts = 0; // Versuche zurücksetzen
+                await sleep(500); // Pause vor der nächsten Runde
+                await nextRound(); // Nächste Runde starten
+
             } else {
-                roundAttempts++;
-                updateProgressCircle(currentRound, false);
-                await playErrorSound();
+                // Runde nicht erfolgreich
+                roundAttempts++; // Versuchszähler erhöhen
+                updateProgressCircle(currentRound, false); // Fortschrittsanzeige aktualisieren (rot)
+                await playErrorSound(); // Fehlerton abspielen
+
                 if (roundAttempts >= MAX_ATTEMPTS_PER_ROUND) {
-                    // endGameMessageElement.textContent = `Sequenz nicht geschafft. Nächste Runde...`;
-                    await sleep(1500);
-                    currentRound++; playerSequence = []; roundAttempts = 0;
-                    // endGameMessageElement.textContent = '';
-                    await nextRound();
+                    // Maximale Versuche erreicht
+                    endGameMessageElement.textContent = `Sequenz nicht geschafft. Nächste Runde...`;
+                    await sleep(1500); // Nachricht anzeigen lassen
+
+                    currentRound++; // Nächste Runde
+                    playerSequence = []; // Spielereingabe zurücksetzen
+                    roundAttempts = 0; // Versuche zurücksetzen
+                    endGameMessageElement.textContent = ''; // Nachricht leeren
+                    await nextRound(); // Nächste Runde starten
                 } else {
-                    playerSequence = [];
-                    await sleep(1000);
+                    // Noch Versuche übrig
+                    endGameMessageElement.textContent = 'Nicht ganz! Hör genau zu.';
+                    playerSequence = []; // Spielereingabe zurücksetzen, um Sequenz neu einzugeben
+                    await sleep(1000); // Nachricht anzeigen lassen
+                    endGameMessageElement.textContent = ''; // Nachricht leeren
+
+                    // Sequenz zur Wiederholung abspielen, damit Spieler sie erneut versuchen kann
                     await playSequence(currentSequence, true);
+
+                    // Nach Wiederholung ist das Spielfeld bereits freigegeben (in playSequence)
+                    // updateButtonStates(gameActive); // Wird in playSequence aufgerufen
                 }
             }
         }
 
         async function endGame() {
+            console.log("endGame wird aufgerufen.");
             const wasActuallyActive = gameActive;
-            gameActive = false; gameWasPausedByMenu = false;
+            gameActive = false; // Spielzustand auf inaktiv setzen
+            gameWasPausedByMenu = false; // Menüpause zurücksetzen
+
+            // boardOverlay entfernen (falls noch aktiv), End-Game Display wird Klicks blockieren
             disableBoardInteraction(false);
-            updateButtonStates(false); updateSettingsAccess(false);
-            clearProgressCircles();
-            if (wasActuallyActive) {
+            updateButtonStates(false); // Buttons deaktivieren
+            updateSettingsAccess(false); // Einstellungen wieder bearbeitbar machen (wenn Menü offen)
+            clearProgressCircles(); // Fortschrittsanzeige leeren
+
+
+            if (wasActuallyActive) { // Nur wenn das Spiel gerade tatsächlich geendet ist (nicht durch Abbruch)
+                console.log("Spiel wurde regulär beendet.");
                 const successRate = totalRounds > 0 ? (correctRounds / totalRounds) * 100 : 0;
                 const message = `Spiel beendet! ${correctRounds} von ${totalRounds} richtig (${successRate.toFixed(0)}%).`;
-                endGameDisplay.querySelector('.emoji-icon').style.display = '';
-                endGameMessageElement.textContent = message;
-                playAgainButtonElement.style.display = '';
+
+                // Inhalt für das End-Game Display setzen
+                endGameDisplay.querySelector('.emoji-icon').style.display = ''; // Sicherstellen, dass Emoji sichtbar ist
+                endGameMessageElement.textContent = message; // Ergebnisnachricht setzen
+                playAgainButtonElement.style.display = ''; // Sicherstellen, dass Button sichtbar ist
+
+                // End-Game Display sichtbar machen (Zoom-Animation)
                 endGameDisplay.classList.add('visible');
-                await sleep(100); await playFixedRewardMelody(false);
+                 console.log("End-Game Display sichtbar gemacht.");
+
+
+                // Belohnungsmelodie immer spielen
+                await sleep(100); // Kleine Pause, bevor die Melodie spielt
+                console.log("Spiele End-Game Melodie.");
+                await playFixedRewardMelody(false); // Spielende-Melodie
+                 console.log("End-Game Melodie beendet.");
+
+
             } else {
+                 // Dies sollte nur bei einem Abbruch (abortGame mit showMessage=false) passieren,
+                 // wo das End-Game Display bereits von abortGame versteckt wurde.
+                 // Wir stellen hier nur sicherheitshalber sicher, dass es nicht sichtbar ist.
                  endGameDisplay.classList.remove('visible');
+                 console.log("endGame aufgerufen, aber Spiel war nicht aktiv (wahrscheinlich Abbruch/Neustartvorbereitung). Display versteckt.");
             }
         }
 
         async function playFixedRewardMelody(isRoundSuccessSound = false) {
             const ctx = await ensureAudioContext();
-            if (!ctx) { return; }
+            if (!ctx) {
+                 console.warn("playFixedRewardMelody: AudioContext nicht bereit, kann Melodie nicht spielen.");
+                 return;
+            }
+             console.log(`playFixedRewardMelody wird gespielt (isRoundSuccessSound: ${isRoundSuccessSound}).`);
+
             let melody; let baseNoteDuration; let basePauseBetweenNotes; let gainValue;
+
             if (isRoundSuccessSound) {
+                // Kurze Melodie für erfolgreiche Runde
                 melody = [NOTE.C5, NOTE.E5, NOTE.G5];
                 baseNoteDuration = 0.12; basePauseBetweenNotes = 0.04; gainValue = 0.15;
             } else {
+                // Zufällige Melodie für Spielende
                 const randomMelodyIndex = Math.floor(Math.random() * REWARD_MELODIES.length);
                 melody = REWARD_MELODIES[randomMelodyIndex];
                 baseNoteDuration = 0.25; basePauseBetweenNotes = 0.08; gainValue = 0.25;
             }
-            if (!melody || melody.length === 0) { return; }
-            let currentTime = ctx.currentTime + 0.05;
+
+            if (!melody || melody.length === 0) {
+                 console.warn("playFixedRewardMelody: Keine Melodie zum Spielen gefunden.");
+                 return;
+            }
+
+            let currentTime = ctx.currentTime + 0.05; // Startet leicht in der Zukunft
             for (const frequency of melody) {
+                // Keine explizite Abbruchbedingung hier, AudioContext Playback stoppt normalerweise
+                // nicht durch JS-Logik, nur durch Nutzeraktionen, Tab-Wechsel etc.
+                // SpeechSynthesis wird in toggleMenu oder abortGame gecancelt, falls nötig.
+
                 if (frequency === NOTE.PAUSE) { currentTime += baseNoteDuration + basePauseBetweenNotes; continue; }
+
                 const oscillator = ctx.createOscillator();
                 const gainNode = ctx.createGain();
                 oscillator.connect(gainNode); gainNode.connect(ctx.destination);
@@ -1071,13 +1235,18 @@
                 oscillator.type = 'sine';
                 gainNode.gain.setValueAtTime(gainValue, currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.00001, currentTime + baseNoteDuration);
-                oscillator.start(currentTime); oscillator.stop(currentTime + baseNoteDuration);
+                oscillator.start(currentTime);
+                oscillator.stop(currentTime + baseNoteDuration);
                 currentTime += baseNoteDuration + basePauseBetweenNotes;
             }
             const melodyDurationMs = Math.max(0, (currentTime - (ctx.currentTime + 0.05))) * 1000;
-            if (melodyDurationMs > 0) { await sleep(melodyDurationMs + 50); }
+            if (melodyDurationMs > 0) {
+                await sleep(melodyDurationMs + 50); // Warten, bis die Melodie wirklich fertig ist
+            }
+             console.log("playFixedRewardMelody: Melodiewiedergabe abgeschlossen.");
         }
 
+        // Hilfsfunktion für Pausen
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
